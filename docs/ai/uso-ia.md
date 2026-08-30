@@ -1,0 +1,2 @@
+# Declaración de uso de IA
+Para la generación del código usando las 4 versiones de prompt, cada integrante del grupo utilizó el IDE Cursor con el modelo Grok 4.6 Medium (modelo por defecto en la versión gratuita).
