@@ -17,7 +17,7 @@ Lo que necesitamos de las skills:
 
 | Fuente | Tipo | Qué tomamos |
 |---|---|---|
-| [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) | Oficial | `claude-security` (descartada) |
+| [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) y [anthropics/skills](https://github.com/anthropics/skills) | Oficial | `frontend-design`; `claude-security` (descartada) |
 | [skills.sh](https://skills.sh) | Directorio | Ranking y fichas de mattpocock/skills, obra/superpowers, wshobson/agents, trailofbits/skills y malikasadjaved/skills |
 | [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) | Repositorio del framework SDD | `openspec-propose` |
 | Repositorios de cada publicador en GitHub | Repositorio | Lectura completa de `SKILL.md`, referencias y `scripts/` |
@@ -31,7 +31,7 @@ Método de revisión: clonamos cada repositorio, leímos el `SKILL.md` completo,
 | 1 | openspec-propose | Especificar y planear | spec, plan | Adoptar |
 | 2 | grill-me / grilling | Especificar y planear | spec | Adoptar |
 | 3 | fastapi-templates | Implementar | código | Adaptar |
-| 4 | api-design-principles | Implementar | plan, código | Adoptar |
+| 4 | frontend-design | Implementar (UX/UI) | plan, código | Adoptar |
 | 5 | test-driven-development | Probar | tests | Adoptar |
 | 6 | python-testing-patterns | Probar | tests | Adoptar |
 | 7 | differential-review | Revisar y seguridad | revisión | Adoptar |
@@ -95,20 +95,22 @@ Revisión de seguridad:
 Veredicto: Adaptar
 Por qué: La separación rutas/servicios/datos coincide con nuestro proyecto, pero instalarla tal cual empujaría al agente a crear base de datos, autenticación y `/api/v1`, que `AGENTS.md` prohíbe. La adaptamos en nuestra skill propia `food-truck-endpoint`. Se actualizó el mismo día de la revisión: hay que volver a leerla antes de usarla.
 
-## Skill: api-design-principles
-Fuente: https://github.com/wshobson/agents/tree/main/plugins/backend-development/skills/api-design-principles · Licencia: MIT
-Actualizada: 2026-05-22 · Publicador: Seth Hobson (wshobson/agents)
+## Skill: frontend-design
+Fuente: https://github.com/anthropics/skills/tree/main/skills/frontend-design · Licencia: Apache 2.0
+Actualizada: 2026-09-03 · Publicador: Anthropic
 Fase SDD: plan | código
 
-Qué hace (2 líneas): Principios de diseño REST y GraphQL: recursos en plural, semántica de métodos HTTP, códigos de estado, paginación y errores consistentes. Incluye un checklist y una plantilla FastAPI de referencia.
+Qué hace (2 líneas): Guía de diseño UX/UI: antes de escribir la interfaz, el agente define un plan (paleta, tipografías, layout y principios), lo revisa contra los patrones genéricos y después construye y critica con capturas. También da reglas de textos de interfaz: botones que dicen lo que hacen y vacíos que orientan.
 
 Revisión de seguridad:
-- ¿Tiene scripts? Trae `assets/rest-api-template.py`, que es una plantilla para leer, no se ejecuta. Usa `allow_origins=["*"]` marcado con un TODO de producción.
+- ¿Tiene scripts? No. Solo `SKILL.md` y `LICENSE.txt`.
 - ¿Lee .env o envía datos fuera? No.
-- ¿Instrucciones raras o caracteres invisibles? No.
+- ¿Instrucciones raras o caracteres invisibles? No. Sugiere usar la memoria del usuario como pista del contexto del cliente, que es inofensivo.
 
 Veredicto: Adoptar
-Por qué: Sirve para diseñar los endpoints nuevos (rutas, camiones, inventario) con criterios consistentes con los que ya usa `AGENTS.md`. Cuando sugiera versionado o rate limiting, manda `AGENTS.md`.
+Por qué: Los mockups del proyecto (Dispatcher, Kitchen kanban, Truck Operator) van a necesitar pantallas, y sin guía el agente produce plantillas genéricas. La probamos en la demo de `docs/ai/demo-ux/`: mismo prompt y mismos datos, antes y después. `AGENTS.md` prohíbe modificar el frontend en las tareas de backend, así que esta skill se usa solo en tareas de interfaz.
+
+> Reemplazó a `api-design-principles` (wshobson/agents, MIT), que también era útil pero se solapaba con las convenciones REST que ya fija `AGENTS.md`.
 
 ---
 

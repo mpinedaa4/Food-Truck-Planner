@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos del día · Street Corner Eats</title>
+<!-- DESPUÉS: mismo prompt y mismos datos, usando la skill frontend-design (anthropics/skills).
+     Plan de diseño en plan-de-diseno.md. -->
+<style>
+@font-face { font-family: "Barlow Condensed"; src: url(fonts/barlow-condensed-latin-600-normal.woff2); font-weight: 600; }
+@font-face { font-family: "Barlow Condensed"; src: url(fonts/barlow-condensed-latin-700-normal.woff2); font-weight: 700; }
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(fonts/atkinson-hyperlegible-latin-400-normal.woff2); font-weight: 400; }
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(fonts/atkinson-hyperlegible-latin-700-normal.woff2); font-weight: 700; }
+
+:root {
+  --rail: #23393B;
+  --workspace: #D9E4E1;
+  --ticket: #FFFDF8;
+  --ink: #15292B;
+  --muted: #4F6467;
+  --teal: #0E6E66;
+  --amber: #F2A93B;
+  --signage: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --text: "Atkinson Hyperlegible", Verdana, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--workspace); color: var(--ink); font-family: var(--text); font-size: 17px; line-height: 1.45; }
+
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 20px; padding: 28px 40px 22px; }
+.top h1 { margin: 0; font-family: var(--signage); font-weight: 700; font-size: 44px; line-height: 1; letter-spacing: -0.01em; }
+.top p { margin: 6px 0 0; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.trucks { display: flex; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.trucks button { font: 700 16px var(--text); background: transparent; color: var(--ink); border: 0; padding: 9px 16px; cursor: pointer; }
+.trucks button + button { border-left: 2px solid var(--ink); }
+.trucks button[aria-pressed="true"] { background: var(--ink); color: var(--ticket); }
+.create { font: 700 16px var(--text); background: var(--teal); color: #fff; border: 0; border-radius: 6px; padding: 11px 18px; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+/* El riel de comandas: la única pieza llamativa de la pantalla */
+.rail { position: relative; margin: 0 24px; padding: 0 16px 40px; display: grid; grid-template-columns: repeat(4, minmax(240px, 1fr)); gap: 16px; }
+.rail::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 18px; background: var(--rail); border-radius: 3px; box-shadow: inset 0 -4px 0 rgba(255,255,255,.08); }
+.lane { position: relative; padding-top: 34px; }
+.lane h2 { margin: 0 0 14px; display: flex; align-items: baseline; gap: 10px; font-family: var(--signage); font-weight: 600; font-size: 26px; line-height: 1.1; }
+.lane h2 span { font-family: var(--text); font-weight: 700; font-size: 15px; color: var(--muted); }
+.lane.ready::before { content: ""; position: absolute; left: -8px; right: -8px; top: 0; height: 18px; background: var(--amber); }
+.lane.ready h2 { color: #7A4A00; }
+.stack { display: flex; flex-direction: column; gap: 18px; }
+
+.ticket { position: relative; background: var(--ticket); padding: 18px 18px 26px; border-radius: 2px 2px 0 0;
+  filter: drop-shadow(0 2px 0 rgba(21,41,43,.12));
+  -webkit-mask: radial-gradient(7px at 50% 100%, #0000 98%, #000) 50% / 14px 100%;
+          mask: radial-gradient(7px at 50% 100%, #0000 98%, #000) 50% / 14px 100%; }
+.ticket::before { content: ""; position: absolute; top: -2px; left: 50%; width: 46px; height: 10px; transform: translateX(-50%); background: #9FB3B0; border-radius: 0 0 4px 4px; }
+.head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.num { font-family: var(--signage); font-weight: 700; font-size: 40px; line-height: .9; }
+.truck { font-weight: 700; font-size: 14px; padding: 3px 9px; border-radius: 4px; border: 2px solid currentColor; white-space: nowrap; }
+.truck.t1 { color: var(--teal); }
+.truck.t2 { color: #5B4A8A; }
+.client { margin: 8px 0 10px; font-weight: 700; }
+.items { list-style: none; margin: 0 0 14px; padding: 10px 0 0; border-top: 2px dashed #C9D4D2; }
+.items li { display: flex; gap: 8px; }
+.items b { min-width: 28px; }
+.advance { width: 100%; font: 700 15px var(--text); background: transparent; color: var(--teal); border: 2px solid var(--teal); border-radius: 4px; padding: 8px; cursor: pointer; }
+.ready .advance { background: var(--amber); color: var(--ink); border-color: var(--amber); }
+.done .ticket { opacity: .62; }
+.empty { color: var(--muted); border: 2px dashed #B3C4C1; padding: 16px; border-radius: 4px; }
+.moved { animation: arrive .5s ease-out; }
+@keyframes arrive { from { transform: translateY(-14px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .moved { animation: none; } }
+@media (max-width: 760px) {
+  .top { padding: 20px 16px; }
+  .rail { margin: 0; padding: 0 16px 32px; grid-template-columns: repeat(4, 82vw); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 16px; }
+  .lane { scroll-snap-align: start; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Pedidos del 28 de agosto</h1>
+    <p id="summary"></p>
+  </div>
+  <div class="controls">
+    <div class="trucks" role="group" aria-label="Filtrar por camión">
+      <button aria-pressed="true" data-truck="all">Todos</button>
+      <button aria-pressed="false" data-truck="1">Camión 1</button>
+      <button aria-pressed="false" data-truck="2">Camión 2</button>
+    </div>
+    <button class="create">Crear pedido</button>
+  </div>
+</header>
+<main class="rail" id="rail"></main>
+<script>
+// Misma forma que GET /pedidos (src/data/mock_data.py) con pedidos de ejemplo adicionales.
+const pedidos = [
+  { id: 1, fecha: "2026-08-28", camion_id: 1, cliente: "Ana Perez", items: ["Taco de pastor", "Agua"], estado: "Received" },
+  { id: 2, fecha: "2026-08-28", camion_id: 2, cliente: "Luis Gomez", items: ["Quesadilla", "Limonada"], estado: "Preparing" },
+  { id: 3, fecha: "2026-08-28", camion_id: 1, cliente: "Marta Rios", items: ["Burrito de res"], estado: "Preparing" },
+  { id: 4, fecha: "2026-08-28", camion_id: 1, cliente: "Jorge Cano", items: ["Nachos", "Agua"], estado: "Ready" },
+  { id: 5, fecha: "2026-08-28", camion_id: 2, cliente: "Sofia Mejia", items: ["Taco de pastor", "Taco de pastor", "Taco de pastor"], estado: "Received" },
+  { id: 6, fecha: "2026-08-28", camion_id: 2, cliente: "Andres Velez", items: ["Quesadilla"], estado: "Picked Up" },
+  { id: 7, fecha: "2026-08-28", camion_id: 1, cliente: "Laura Ochoa", items: ["Burrito de res", "Limonada"], estado: "Ready" }
+];
+// Estados de la API → lo que lee el equipo en la cocina.
+const lanes = [
+  { estado: "Received",  nombre: "Recibido",           accion: "Empezar a preparar", vacio: "Sin pedidos nuevos por ahora." },
+  { estado: "Preparing", nombre: "En preparación",     accion: "Marcar como listo",  vacio: "La plancha está libre." },
+  { estado: "Ready",     nombre: "Listo para recoger", accion: "Entregar al cliente", vacio: "Nada esperando. Los pedidos listos aparecen aquí." },
+  { estado: "Picked Up", nombre: "Entregado",          accion: null,                 vacio: "Aún no se ha entregado nada hoy." }
+];
+let filtro = "all";
+let ultimo = null;
+
+function agrupar(items) {
+  const m = new Map();
+  items.forEach(i => m.set(i, (m.get(i) || 0) + 1));
+  return [...m].map(([i, n]) => `<li><b>${n}×</b><span>${i}</span></li>`).join("");
+}
+function render() {
+  const visibles = pedidos.filter(p => filtro === "all" || String(p.camion_id) === filtro);
+  const listos = visibles.filter(p => p.estado === "Ready").length;
+  document.getElementById("summary").textContent =
+    listos ? `${listos} ${listos === 1 ? "pedido espera" : "pedidos esperan"} a su cliente.` : "Ningún pedido espera a su cliente.";
+  document.getElementById("rail").innerHTML = lanes.map((l, i) => {
+    const ps = visibles.filter(p => p.estado === l.estado);
+    const cls = l.estado === "Ready" ? "ready" : l.estado === "Picked Up" ? "done" : "";
+    return `<section class="lane ${cls}" aria-labelledby="l${i}">
+      <h2 id="l${i}">${l.nombre} <span>${ps.length}</span></h2>
+      <div class="stack">${ps.length ? ps.map(p => `
+        <article class="ticket ${p.id === ultimo ? "moved" : ""}">
+          <div class="head"><div class="num">#${p.id}</div><div class="truck t${p.camion_id}">Camión ${p.camion_id}</div></div>
+          <div class="client">${p.cliente}</div>
+          <ul class="items">${agrupar(p.items)}</ul>
+          ${l.accion ? `<button class="advance" data-id="${p.id}" data-next="${lanes[i + 1].estado}">${l.accion}</button>` : ""}
+        </article>`).join("") : `<p class="empty">${l.vacio}</p>`}</div>
+    </section>`;
+  }).join("");
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-truck]");
+  if (t) {
+    filtro = t.dataset.truck;
+    document.querySelectorAll("[data-truck]").forEach(b => b.setAttribute("aria-pressed", b === t));
+    render();
+  }
+  const a = e.target.closest(".advance");
+  if (a) {
+    // En la app real: PATCH /pedidos/{id}/estado con { estado: next }.
+    const p = pedidos.find(x => x.id === Number(a.dataset.id));
+    p.estado = a.dataset.next;
+    ultimo = p.id;
+    render();
+  }
+});
+render();
+</script>
+</body>
+</html>
