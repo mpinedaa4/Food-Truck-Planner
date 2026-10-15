@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Street Corner Eats · Dónde estamos hoy</title>
+<meta name="description" content="Encuentra los camiones de Street Corner Eats hoy y consulta si tu pedido ya está listo.">
+<!-- CON SKILL frontend-design (anthropics/skills). Mismo prompt que sin-skill.
+     Plan de diseño y revisión en ../README.md. -->
+<style>
+@font-face { font-family: "Big Shoulders Display"; src: url(../fonts/big-shoulders-display-latin-800-normal.woff2); font-weight: 800; }
+@font-face { font-family: "Big Shoulders Display"; src: url(../fonts/big-shoulders-display-latin-900-normal.woff2); font-weight: 900; }
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(../fonts/atkinson-hyperlegible-latin-400-normal.woff2); font-weight: 400; }
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(../fonts/atkinson-hyperlegible-latin-700-normal.woff2); font-weight: 700; }
+
+:root {
+  --asphalt: #22302F;
+  --asphalt-2: #2C3C3B;
+  --curb: #F2C230;
+  --teal: #0E6E66;
+  --sky: #EEF3F2;
+  --ink: #142624;
+  --muted: #4B5F5D;
+  --sign: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --text: "Atkinson Hyperlegible", Verdana, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--sky); color: var(--ink); font-family: var(--text); font-size: 18px; line-height: 1.5; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--curb); outline-offset: 3px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+/* Barra superior */
+.bar { background: var(--asphalt); color: #fff; }
+.bar .wrap { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+.brand { font-family: var(--sign); font-weight: 900; font-size: 28px; letter-spacing: .01em; text-decoration: none; }
+.bar a.link { font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+/* Hero: el tablero de paradas del día es lo primero que se ve */
+.hero { background: var(--asphalt); color: #fff; padding: 48px 0 0; position: relative; }
+.hero h1 { font-family: var(--sign); font-weight: 900; font-size: clamp(56px, 9vw, 120px); line-height: .92; margin: 0; max-width: 11ch; }
+.hero .date { margin: 0 0 18px; font-size: 20px; color: #C9D6D4; }
+.hero .lede { margin: 22px 0 36px; max-width: 46ch; color: #DCE6E4; font-size: 20px; }
+.stops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding-bottom: 56px; }
+.stop { background: var(--teal); border: 3px solid #fff; border-radius: 10px; padding: 22px 24px; display: grid; gap: 6px; box-shadow: 0 0 0 6px var(--teal); }
+.stop .truck { font-weight: 700; font-size: 16px; color: #CFEAE6; }
+.stop .where { font-family: var(--sign); font-weight: 800; font-size: 40px; line-height: 1; }
+.stop .when { font-weight: 700; font-size: 19px; }
+.curb { height: 22px; background: repeating-linear-gradient(90deg, var(--curb) 0 64px, var(--asphalt-2) 64px 96px); }
+
+/* Cómo avanza tu pedido: es una secuencia real, por eso va numerada */
+.flow { padding: 72px 0 40px; }
+.flow h2, .lookup h2 { font-family: var(--sign); font-weight: 900; font-size: clamp(40px, 5vw, 60px); line-height: 1; margin: 0 0 12px; }
+.flow > .wrap > p { margin: 0 0 32px; color: var(--muted); max-width: 56ch; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 4px solid var(--ink); }
+.steps li { padding: 20px 20px 0 0; }
+.steps b { display: block; font-family: var(--sign); font-weight: 900; font-size: 30px; line-height: 1.05; margin-bottom: 6px; }
+.steps span { color: var(--muted); }
+.steps .num { font-family: var(--sign); font-weight: 800; font-size: 18px; color: var(--teal); display: block; margin-bottom: 8px; }
+.steps li.hl b { color: #7A5A00; }
+.steps li.hl { border-top: 8px solid var(--curb); margin-top: -6px; }
+
+/* Consulta de pedido */
+.lookup { padding: 40px 0 88px; }
+.panel { background: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.panel p.help { margin: 0; color: var(--muted); max-width: 40ch; }
+form { display: grid; gap: 10px; }
+label { font-weight: 700; }
+.row { display: flex; gap: 10px; }
+input { flex: 1; min-width: 0; font: 400 22px var(--text); padding: 12px 14px; border: 2px solid var(--ink); border-radius: 8px; background: var(--sky); color: var(--ink); }
+button { font: 700 18px var(--text); background: var(--teal); color: #fff; border: 0; border-radius: 8px; padding: 0 20px; cursor: pointer; }
+.result { min-height: 64px; margin-top: 8px; padding: 14px 16px; border-radius: 8px; background: var(--sky); }
+.result.ready { background: #FFF2C2; border-left: 6px solid var(--curb); }
+.result.err { background: #FBE7E2; border-left: 6px solid #B0412A; }
+.result strong { display: block; font-size: 20px; }
+
+footer { background: var(--asphalt); color: #C9D6D4; padding: 28px 0; font-size: 16px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 760px) {
+  .stops { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; row-gap: 24px; }
+  .panel { grid-template-columns: 1fr; padding: 24px; }
+  .stop .where { font-size: 34px; }
+  .brand { font-size: 22px; }
+  .bar a.link { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="wrap">
+  <a class="brand" href="#">Street Corner Eats</a>
+  <a class="link" href="#pedido">Consulta tu pedido</a>
+</div></div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="date">Jueves 28 de agosto</p>
+    <h1>Hoy estamos en dos esquinas.</h1>
+    <p class="lede">Pide en el camión o con nuestro equipo, y recoge cuando tu pedido esté listo. Cada día publicamos aquí dónde para cada camión.</p>
+    <div class="stops">
+      <article class="stop">
+        <span class="truck">Camión 1</span>
+        <span class="where">Calle 10 con Carrera 43</span>
+        <span class="when">11:30 a. m. a 3:00 p. m.</span>
+      </article>
+      <article class="stop">
+        <span class="truck">Camión 2</span>
+        <span class="where">Parque de los Deseos</span>
+        <span class="when">12:00 m. a 4:00 p. m.</span>
+      </article>
+    </div>
+  </div>
+  <div class="curb" aria-hidden="true"></div>
+</header>
+
+<main>
+  <section class="flow">
+    <div class="wrap">
+      <h2>Así avanza tu pedido</h2>
+      <p>Con tu número de pedido puedes ver en qué paso va. Te avisamos en el camión cuando esté listo.</p>
+      <ol class="steps">
+        <li><span class="num">1</span><b>Recibido</b><span>Ya está en la lista del camión.</span></li>
+        <li><span class="num">2</span><b>En preparación</b><span>Está en la plancha.</span></li>
+        <li class="hl"><span class="num">3</span><b>Listo para recoger</b><span>Acércate a la ventanilla del camión.</span></li>
+        <li><span class="num">4</span><b>Entregado</b><span>Buen provecho.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="lookup" id="pedido">
+    <div class="wrap">
+      <div class="panel">
+        <div>
+          <h2>Consulta tu pedido</h2>
+          <p class="help">Escribe el número que te dimos al hacer el pedido. Lo encuentras en tu comprobante.</p>
+        </div>
+        <form id="f" novalidate>
+          <label for="n">Número de pedido</label>
+          <div class="row">
+            <input id="n" name="n" inputmode="numeric" autocomplete="off" placeholder="Ej. 4">
+            <button type="submit">Consultar estado</button>
+          </div>
+          <div class="result" id="r" role="status" aria-live="polite">Prueba con un número del 1 al 7.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>Street Corner Eats</span>
+  <span>Las paradas cambian cada día. Revisa esta página antes de salir.</span>
+</div></footer>
+
+<script>
+// Datos de ejemplo con la forma de GET /pedidos (src/data/mock_data.py).
+// En la app real esta consulta saldría de la API; las paradas, de las rutas del día.
+const pedidos = [
+  { id: 1, camion_id: 1, cliente: "Ana Perez", estado: "Received" },
+  { id: 2, camion_id: 2, cliente: "Luis Gomez", estado: "Preparing" },
+  { id: 3, camion_id: 1, cliente: "Marta Rios", estado: "Preparing" },
+  { id: 4, camion_id: 1, cliente: "Jorge Cano", estado: "Ready" },
+  { id: 5, camion_id: 2, cliente: "Sofia Mejia", estado: "Received" },
+  { id: 6, camion_id: 2, cliente: "Andres Velez", estado: "Picked Up" },
+  { id: 7, camion_id: 1, cliente: "Laura Ochoa", estado: "Ready" }
+];
+const texto = {
+  "Received": "Recibido. Ya está en la lista del camión.",
+  "Preparing": "En preparación. Está en la plancha.",
+  "Ready": "Listo para recoger. Acércate a la ventanilla.",
+  "Picked Up": "Entregado. Si no lo recibiste, habla con el camión."
+};
+const r = document.getElementById("r");
+document.getElementById("f").addEventListener("submit", e => {
+  e.preventDefault();
+  const v = document.getElementById("n").value.trim().replace("#", "");
+  r.className = "result";
+  if (!/^\d+$/.test(v)) {
+    r.classList.add("err");
+    r.innerHTML = "<strong>Escribe solo el número</strong>Por ejemplo: 4.";
+    return;
+  }
+  const p = pedidos.find(x => x.id === Number(v));
+  if (!p) {
+    r.classList.add("err");
+    r.innerHTML = `<strong>No encontramos el pedido #${v}</strong>Revisa el número en tu comprobante o pregunta en el camión.`;
+    return;
+  }
+  // Solo el primer nombre: la consulta es pública.
+  const nombre = p.cliente.split(" ")[0];
+  if (p.estado === "Ready") r.classList.add("ready");
+  r.innerHTML = `<strong>Pedido #${p.id} de ${nombre} · Camión ${p.camion_id}</strong>${texto[p.estado]}`;
+});
+</script>
+</body>
+</html>
