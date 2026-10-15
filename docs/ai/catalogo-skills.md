@@ -22,7 +22,7 @@ Lo que necesitamos de las skills:
 | [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) | Repositorio del framework SDD | `openspec-propose` |
 | Repositorios de cada publicador en GitHub | Repositorio | Lectura completa de `SKILL.md`, referencias y `scripts/` |
 
-Método de revisión: clonamos cada repositorio, leímos el `SKILL.md` completo, sus archivos de referencia y sus scripts, buscamos referencias a `.env`, llamadas de red (`curl`, `wget`, `requests`, `urlopen`) y caracteres Unicode invisibles (rangos U+200B–U+200F, U+202A–U+202E, U+2060–U+2064, U+FEFF y etiquetas U+E0000–U+E007F). Ninguna de las 13 skills revisadas tiene caracteres invisibles. La fecha de actualización es el último commit que tocó la carpeta de la skill, revisado el 15 de octubre de 2026.
+Método de revisión: clonamos cada repositorio, leímos el `SKILL.md` completo, sus archivos de referencia y sus scripts, buscamos referencias a `.env`, llamadas de red (`curl`, `wget`, `requests`, `urlopen`) y caracteres Unicode invisibles (rangos U+200B–U+200F, U+202A–U+202E, U+2060–U+2064, U+FEFF y etiquetas U+E0000–U+E007F). Ninguna de las 14 skills revisadas tiene caracteres invisibles. La fecha de actualización es el último commit que tocó la carpeta de la skill, revisado el 15 de octubre de 2026.
 
 ## Resumen
 
