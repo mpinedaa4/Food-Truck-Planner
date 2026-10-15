@@ -3,161 +3,274 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Street Corner Eats · Dónde estamos hoy</title>
-<meta name="description" content="Encuentra los camiones de Street Corner Eats hoy y consulta si tu pedido ya está listo.">
-<!-- CON SKILL frontend-design (anthropics/skills). Mismo prompt que sin-skill.
-     Plan de diseño y revisión en ../README.md. -->
+<title>Street Corner Eats · Encuentra tu camión hoy</title>
+<meta name="description" content="Encuentra los camiones de Street Corner Eats hoy, pide y consulta si tu pedido ya está listo.">
+<!-- CON SKILL ui-ux-pro-max (nextlevelbuilder/ui-ux-pro-max-skill, MIT). Mismo prompt que sin_skill.
+     Sistema de diseño generado por la skill: design-system/street-corner-eats/MASTER.md -->
 <style>
-@font-face { font-family: "Big Shoulders Display"; src: url(../fonts/big-shoulders-display-latin-800-normal.woff2); font-weight: 800; }
-@font-face { font-family: "Big Shoulders Display"; src: url(../fonts/big-shoulders-display-latin-900-normal.woff2); font-weight: 900; }
-@font-face { font-family: "Atkinson Hyperlegible"; src: url(../fonts/atkinson-hyperlegible-latin-400-normal.woff2); font-weight: 400; }
-@font-face { font-family: "Atkinson Hyperlegible"; src: url(../fonts/atkinson-hyperlegible-latin-700-normal.woff2); font-weight: 700; }
+@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-700-normal.woff2); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-900-normal.woff2); font-weight: 900; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-400-normal.woff2); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-500-normal.woff2); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-700-normal.woff2); font-weight: 700; font-display: swap; }
 
+/* Tokens del MASTER.md (Vibrant & Block-based, "Appetizing red + warm gold") */
 :root {
-  --asphalt: #22302F;
-  --asphalt-2: #2C3C3B;
-  --curb: #F2C230;
-  --teal: #0E6E66;
-  --sky: #EEF3F2;
-  --ink: #142624;
-  --muted: #4B5F5D;
-  --sign: "Big Shoulders Display", "Arial Narrow", sans-serif;
-  --text: "Atkinson Hyperlegible", Verdana, sans-serif;
+  --color-primary: #DC2626;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #F87171;
+  --color-accent: #A16207;
+  --color-on-accent: #FFFFFF;
+  --color-background: #FEF2F2;
+  --color-foreground: #450A0A;
+  --color-card: #FFFFFF;
+  --color-muted-foreground: #475569;
+  --color-border: #FECACA;
+  --color-ring: #DC2626;
+  /* Colores por paso del patrón Funnel: 1 rojo, 2 naranja, 3 verde */
+  --step-1: #DC2626;
+  --step-2: #C2410C;
+  --step-3: #15803D;
+  --gold-soft: #FDE68A;
+  --font-heading: "Playfair Display SC", Georgia, serif;
+  --font-body: "Karla", Arial, sans-serif;
+  --block-gap: 48px;
+  --ease: 200ms ease-out;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; background: var(--sky); color: var(--ink); font-family: var(--text); font-size: 18px; line-height: 1.5; }
-a { color: inherit; }
-:focus-visible { outline: 3px solid var(--curb); outline-offset: 3px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+body { margin: 0; background: var(--color-background); color: var(--color-foreground); font-family: var(--font-body); font-size: 18px; line-height: 1.5; }
+a, button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+svg.i { width: 28px; height: 28px; flex: none; }
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 900; line-height: 1.05; margin: 0; font-variant-ligatures: no-common-ligatures; }
 
-/* Barra superior */
-.bar { background: var(--asphalt); color: #fff; }
-.bar .wrap { display: flex; justify-content: space-between; align-items: center; height: 64px; }
-.brand { font-family: var(--sign); font-weight: 900; font-size: 28px; letter-spacing: .01em; text-decoration: none; }
-.bar a.link { font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+/* Barra */
+.nav { background: var(--color-foreground); color: #fff; }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 900; font-size: 24px; color: #fff; text-decoration: none; }
+.logo span.dot { width: 18px; height: 18px; border-radius: 50%; background: var(--color-primary); box-shadow: 10px 0 0 var(--gold-soft); margin-right: 10px; }
+.nav-cta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--color-primary); color: #fff; font-weight: 700; text-decoration: none; transition: background var(--ease); }
+.nav-cta:hover { background: #B91C1C; }
 
-/* Hero: el tablero de paradas del día es lo primero que se ve */
-.hero { background: var(--asphalt); color: #fff; padding: 48px 0 0; position: relative; }
-.hero h1 { font-family: var(--sign); font-weight: 900; font-size: clamp(56px, 9vw, 120px); line-height: .92; margin: 0; max-width: 11ch; }
-.hero .date { margin: 0 0 18px; font-size: 20px; color: #C9D6D4; }
-.hero .lede { margin: 22px 0 36px; max-width: 46ch; color: #DCE6E4; font-size: 20px; }
-.stops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding-bottom: 56px; }
-.stop { background: var(--teal); border: 3px solid #fff; border-radius: 10px; padding: 22px 24px; display: grid; gap: 6px; box-shadow: 0 0 0 6px var(--teal); }
-.stop .truck { font-weight: 700; font-size: 16px; color: #CFEAE6; }
-.stop .where { font-family: var(--sign); font-weight: 800; font-size: 40px; line-height: 1; }
-.stop .when { font-weight: 700; font-size: 19px; }
-.curb { height: 22px; background: repeating-linear-gradient(90deg, var(--curb) 0 64px, var(--asphalt-2) 64px 96px); }
+/* Hero en bloque rojo con patrón animado */
+.hero { position: relative; overflow: hidden; background: var(--color-primary); color: var(--color-on-primary); padding: 72px 0 88px; }
+.hero::before { content: ""; position: absolute; inset: -40px; background-image: radial-gradient(rgba(255,255,255,.14) 2px, transparent 2px); background-size: 28px 28px; animation: drift 18s linear infinite; }
+.hero .shape { position: absolute; border-radius: 50%; background: var(--gold-soft); }
+.hero .shape.a { width: 360px; height: 360px; right: -90px; top: -110px; }
+.hero .shape.b { width: 140px; height: 140px; right: 260px; bottom: -50px; background: var(--color-foreground); }
+@keyframes drift { to { transform: translate(28px, 28px); } }
+.hero .wrap { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--block-gap); align-items: end; }
+.kicker { display: inline-block; background: var(--color-foreground); color: #fff; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; }
+.hero h1 { font-size: clamp(48px, 7vw, 92px); }
+.hero p.lede { font-size: 21px; margin: 20px 0 32px; max-width: 34ch; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 14px; font: 700 18px var(--font-body); border: 0; text-decoration: none; transition: transform var(--ease), background var(--ease); }
+.btn-light { background: #fff; color: var(--color-foreground); }
+.btn-light:hover { background: var(--gold-soft); }
+.btn:active { transform: translateY(1px); }
+.today { background: var(--color-card); color: var(--color-foreground); border-radius: 24px; padding: 28px; display: grid; gap: 16px; box-shadow: 12px 12px 0 var(--color-foreground); }
+.today h2 { font-size: 30px; }
+.stop { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 16px; border-radius: 16px; background: var(--color-background); border: 2px solid var(--color-border); }
+.stop .badge { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--color-primary); color: #fff; font-family: var(--font-heading); font-weight: 900; font-size: 26px; }
+.stop strong { display: block; font-size: 20px; }
+.stop .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--color-muted-foreground); font-weight: 500; }
+.stop .meta span { display: inline-flex; align-items: center; gap: 6px; }
+.stop .meta svg { width: 18px; height: 18px; color: var(--color-primary); }
 
-/* Cómo avanza tu pedido: es una secuencia real, por eso va numerada */
-.flow { padding: 72px 0 40px; }
-.flow h2, .lookup h2 { font-family: var(--sign); font-weight: 900; font-size: clamp(40px, 5vw, 60px); line-height: 1; margin: 0 0 12px; }
-.flow > .wrap > p { margin: 0 0 32px; color: var(--muted); max-width: 56ch; }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 4px solid var(--ink); }
-.steps li { padding: 20px 20px 0 0; }
-.steps b { display: block; font-family: var(--sign); font-weight: 900; font-size: 30px; line-height: 1.05; margin-bottom: 6px; }
-.steps span { color: var(--muted); }
-.steps .num { font-family: var(--sign); font-weight: 800; font-size: 18px; color: var(--teal); display: block; margin-bottom: 8px; }
-.steps li.hl b { color: #7A5A00; }
-.steps li.hl { border-top: 8px solid var(--curb); margin-top: -6px; }
+/* Funnel de 3 pasos en bloques de color */
+.steps { padding: 96px 0 48px; }
+.steps > .wrap > h2 { font-size: clamp(36px, 5vw, 56px); }
+.steps > .wrap > p { color: var(--color-muted-foreground); max-width: 52ch; margin: 12px 0 40px; font-size: 20px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.step { border-radius: 24px; padding: 32px 28px; color: #fff; display: grid; gap: 14px; align-content: start; min-height: 300px; }
+.step:nth-child(1) { background: var(--step-1); }
+.step:nth-child(2) { background: var(--step-2); }
+.step:nth-child(3) { background: var(--step-3); }
+.step .n { font-family: var(--font-heading); font-weight: 900; font-size: 64px; line-height: .9; opacity: .9; }
+.step h3 { font-size: 30px; }
+.step p { margin: 0; font-size: 18px; }
+.step a { color: #fff; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-underline-offset: 4px; }
 
-/* Consulta de pedido */
-.lookup { padding: 40px 0 88px; }
-.panel { background: #fff; border: 3px solid var(--ink); border-radius: 12px; padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-.panel p.help { margin: 0; color: var(--muted); max-width: 40ch; }
+/* Estados del pedido */
+.status { padding: 48px 0; }
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.chip { background: var(--color-card); border: 2px solid var(--color-border); border-radius: 18px; padding: 20px; display: flex; gap: 12px; align-items: center; }
+.chip svg { color: var(--color-primary); }
+.chip b { display: block; font-size: 19px; }
+.chip small { color: var(--color-muted-foreground); font-size: 16px; }
+.chip.hl { border-color: var(--step-3); background: #F0FDF4; }
+.chip.hl svg { color: var(--step-3); }
+
+/* Consulta (paso 3) */
+.lookup { padding: 48px 0 96px; }
+.panel { background: var(--color-foreground); color: #fff; border-radius: 28px; padding: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: var(--block-gap); align-items: center; }
+.panel h2 { font-size: clamp(34px, 4vw, 52px); }
+.panel p { color: #FECACA; margin: 12px 0 0; }
 form { display: grid; gap: 10px; }
-label { font-weight: 700; }
-.row { display: flex; gap: 10px; }
-input { flex: 1; min-width: 0; font: 400 22px var(--text); padding: 12px 14px; border: 2px solid var(--ink); border-radius: 8px; background: var(--sky); color: var(--ink); }
-button { font: 700 18px var(--text); background: var(--teal); color: #fff; border: 0; border-radius: 8px; padding: 0 20px; cursor: pointer; }
-.result { min-height: 64px; margin-top: 8px; padding: 14px 16px; border-radius: 8px; background: var(--sky); }
-.result.ready { background: #FFF2C2; border-left: 6px solid var(--curb); }
-.result.err { background: #FBE7E2; border-left: 6px solid #B0412A; }
+label { font-weight: 700; font-size: 18px; }
+.row { display: flex; gap: 12px; }
+input { flex: 1; min-width: 0; min-height: 56px; font: 500 22px var(--font-body); padding: 0 18px; border-radius: 14px; border: 3px solid transparent; background: #fff; color: var(--color-foreground); transition: border-color var(--ease); }
+input[aria-invalid="true"] { border-color: var(--color-secondary); }
+.btn-primary { background: var(--color-primary); color: #fff; }
+.btn-primary:hover { background: #B91C1C; }
+.hint { color: #FECACA; font-size: 16px; margin: 0; }
+.err { color: #FFE4E6; font-weight: 700; margin: 0; min-height: 24px; }
+.result { margin-top: 6px; border-radius: 16px; background: #fff; color: var(--color-foreground); padding: 18px 20px; display: none; gap: 14px; align-items: center; }
+.result.show { display: flex; }
+.result svg { color: var(--color-primary); }
+.result.ready { background: #F0FDF4; }
+.result.ready svg { color: var(--step-3); }
 .result strong { display: block; font-size: 20px; }
 
-footer { background: var(--asphalt); color: #C9D6D4; padding: 28px 0; font-size: 16px; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+/* CTA final */
+.final { background: var(--color-accent); color: var(--color-on-accent); padding: 64px 0; }
+.final .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; }
+.final h2 { font-size: clamp(32px, 4vw, 48px); }
+footer { background: var(--color-foreground); color: #FECACA; padding: 24px 0; font-size: 16px; }
 
-@media (max-width: 760px) {
-  .stops { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr 1fr; row-gap: 24px; }
-  .panel { grid-template-columns: 1fr; padding: 24px; }
-  .stop .where { font-size: 34px; }
-  .brand { font-size: 22px; }
-  .bar a.link { font-size: 16px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero::before { animation: none; }
+  * { transition: none !important; }
+}
+@media (max-width: 1024px) {
+  .chips { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .hero { padding: 48px 0 64px; }
+  .hero .wrap, .panel { grid-template-columns: 1fr; }
+  .hero .shape.a { width: 220px; height: 220px; right: -110px; }
+  .hero .shape.b { display: none; }
+  .grid { grid-template-columns: 1fr; }
+  .step { min-height: 0; }
+  .panel { padding: 28px; }
+  .row { flex-direction: column; }
+  .nav-cta .t { display: none; }
+}
+@media (max-width: 480px) {
+  .chips { grid-template-columns: 1fr; }
+  .logo { font-size: 18px; white-space: nowrap; }
 }
 </style>
 </head>
 <body>
-<div class="bar"><div class="wrap">
-  <a class="brand" href="#">Street Corner Eats</a>
-  <a class="link" href="#pedido">Consulta tu pedido</a>
-</div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Íconos Phosphor (bold, MIT), recomendados por la búsqueda de íconos de la skill -->
+  <symbol id="i-pin" viewBox="0 0 256 256"><path fill="currentColor" d="M128,60a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,60Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,124Zm0-112a92.1,92.1,0,0,0-92,92c0,77.36,81.64,135.4,85.12,137.83a12,12,0,0,0,13.76,0,259,259,0,0,0,42.18-39C205.15,170.57,220,136.37,220,104A92.1,92.1,0,0,0,128,12Zm31.3,174.71A249.35,249.35,0,0,1,128,216.89a249.35,249.35,0,0,1-31.3-30.18C80,167.37,60,137.31,60,104a68,68,0,0,1,136,0C196,137.31,176,167.37,159.3,186.71Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 256 256"><path fill="currentColor" d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm68-84a12,12,0,0,1-12,12H128a12,12,0,0,1-12-12V72a12,12,0,0,1,24,0v44h44A12,12,0,0,1,196,128Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 256 256"><path fill="currentColor" d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 256 256"><path fill="currentColor" d="M68,100A12,12,0,0,1,80,88h96a12,12,0,0,1,0,24H80A12,12,0,0,1,68,100Zm12,52h96a12,12,0,0,0,0-24H80a12,12,0,0,0,0,24ZM236,56V208a12,12,0,0,1-17.37,10.73L192,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L128,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L64,205.42,37.37,218.73A12,12,0,0,1,20,208V56A20,20,0,0,1,40,36H216A20,20,0,0,1,236,56Zm-24,4H44V188.58l14.63-7.31a12,12,0,0,1,10.74,0L96,194.58l26.63-13.31a12,12,0,0,1,10.74,0L160,194.58l26.63-13.31a12,12,0,0,1,10.74,0L212,188.58Z"/></symbol>
+  <symbol id="i-fire" viewBox="0 0 256 256"><path fill="currentColor" d="M177.62,159.6a52,52,0,0,1-34,34,12.2,12.2,0,0,1-3.6.55,12,12,0,0,1-3.6-23.45,28,28,0,0,0,18.32-18.32,12,12,0,0,1,22.9,7.2ZM220,144a92,92,0,0,1-184,0c0-28.81,11.27-58.18,33.48-87.28a12,12,0,0,1,17.9-1.33L107.07,74.5,127,19.89a12,12,0,0,1,18.94-5.12C168.2,33.25,220,82.85,220,144Zm-24,0c0-41.71-30.61-78.39-52.52-99.29l-20.21,55.4a12,12,0,0,1-19.63,4.5L80.71,82.36C67,103.38,60,124.06,60,144a68,68,0,0,0,136,0Z"/></symbol>
+  <symbol id="i-store" viewBox="0 0 256 256"><path fill="currentColor" d="M236,96a12,12,0,0,0-.44-3.3L221.2,42.51A20.08,20.08,0,0,0,202,28H54A20.08,20.08,0,0,0,34.8,42.51L20.46,92.7A12,12,0,0,0,20,96h0v16a43.94,43.94,0,0,0,16,33.92V216a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V145.92A43.94,43.94,0,0,0,236,112V96ZM57.05,52H199l9.14,32H47.91Zm91,56v4a20,20,0,0,1-40,0v-4ZM53,128.71A20,20,0,0,1,44,112v-4H84v4a20,20,0,0,1-20,20,19.76,19.76,0,0,1-9.07-2.2A11.54,11.54,0,0,0,53,128.71ZM196,204H60V155.81c1.32.12,2.65.19,4,.19a43.86,43.86,0,0,0,32-13.85,43.89,43.89,0,0,0,64,0A43.86,43.86,0,0,0,192,156c1.35,0,2.68-.07,4-.19Zm16-92a20,20,0,0,1-9,16.71,11.66,11.66,0,0,0-1.88,1.09A20,20,0,0,1,172,112v-4h40Z"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 256 256"><path fill="currentColor" d="M188,76a31.85,31.85,0,0,0-11.21,2,32,32,0,0,0-48.79-11A32,32,0,0,0,76,92v16H68a32,32,0,0,0-32,32v12a92,92,0,0,0,184,0V108A32,32,0,0,0,188,76Zm8,76a68,68,0,0,1-136,0V140a8,8,0,0,1,8-8h8v20a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V108a8,8,0,0,1,16,0Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 256 256"><path fill="currentColor" d="M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z"/></symbol>
+</svg>
 
-<header class="hero">
-  <div class="wrap">
-    <p class="date">Jueves 28 de agosto</p>
-    <h1>Hoy estamos en dos esquinas.</h1>
-    <p class="lede">Pide en el camión o con nuestro equipo, y recoge cuando tu pedido esté listo. Cada día publicamos aquí dónde para cada camión.</p>
-    <div class="stops">
-      <article class="stop">
-        <span class="truck">Camión 1</span>
-        <span class="where">Calle 10 con Carrera 43</span>
-        <span class="when">11:30 a. m. a 3:00 p. m.</span>
-      </article>
-      <article class="stop">
-        <span class="truck">Camión 2</span>
-        <span class="where">Parque de los Deseos</span>
-        <span class="when">12:00 m. a 4:00 p. m.</span>
-      </article>
-    </div>
-  </div>
-  <div class="curb" aria-hidden="true"></div>
-</header>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="#"><span class="dot" aria-hidden="true"></span>Street Corner Eats</a>
+  <a class="nav-cta" href="#consulta"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="t">Consultar mi pedido</span><span class="sr" style="position:absolute;left:-9999px">Consultar mi pedido</span></a>
+</div></header>
 
 <main>
-  <section class="flow">
+  <section class="hero">
+    <span class="shape a" aria-hidden="true"></span>
+    <span class="shape b" aria-hidden="true"></span>
     <div class="wrap">
-      <h2>Así avanza tu pedido</h2>
-      <p>Con tu número de pedido puedes ver en qué paso va. Te avisamos en el camión cuando esté listo.</p>
-      <ol class="steps">
-        <li><span class="num">1</span><b>Recibido</b><span>Ya está en la lista del camión.</span></li>
-        <li><span class="num">2</span><b>En preparación</b><span>Está en la plancha.</span></li>
-        <li class="hl"><span class="num">3</span><b>Listo para recoger</b><span>Acércate a la ventanilla del camión.</span></li>
-        <li><span class="num">4</span><b>Entregado</b><span>Buen provecho.</span></li>
-      </ol>
+      <div>
+        <span class="kicker">Jueves 28 de agosto</span>
+        <h1>Comida de calle, en tu esquina.</h1>
+        <p class="lede">Mira dónde para cada camión hoy, pide en la ventanilla y consulta cuándo está listo tu pedido.</p>
+        <a class="btn btn-light" href="#consulta"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Consultar mi pedido</a>
+      </div>
+      <div class="today" aria-labelledby="hoy">
+        <h2 id="hoy">Paradas de hoy</h2>
+        <div class="stop">
+          <span class="badge" aria-hidden="true">1</span>
+          <div><strong>Camión 1 · Calle 10 con Carrera 43</strong>
+            <div class="meta"><span><svg aria-hidden="true"><use href="#i-clock"/></svg>11:30 a. m. a 3:00 p. m.</span></div></div>
+        </div>
+        <div class="stop">
+          <span class="badge" aria-hidden="true">2</span>
+          <div><strong>Camión 2 · Parque de los Deseos</strong>
+            <div class="meta"><span><svg aria-hidden="true"><use href="#i-clock"/></svg>12:00 m. a 4:00 p. m.</span></div></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="lookup" id="pedido">
+  <section class="steps" aria-labelledby="como">
+    <div class="wrap">
+      <h2 id="como">Tu almuerzo en 3 pasos</h2>
+      <p>Sin apps ni registros: solo encuentra el camión, pide y recoge.</p>
+      <div class="grid">
+        <article class="step">
+          <span class="n" aria-hidden="true">1</span>
+          <svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>
+          <h3>Encuentra el camión</h3>
+          <p>Las paradas cambian cada día. Revísalas arriba antes de salir.</p>
+        </article>
+        <article class="step">
+          <span class="n" aria-hidden="true">2</span>
+          <svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg>
+          <h3>Haz tu pedido</h3>
+          <p>Pide en la ventanilla. Te damos un número de pedido en tu comprobante.</p>
+        </article>
+        <article class="step">
+          <span class="n" aria-hidden="true">3</span>
+          <svg class="i" aria-hidden="true"><use href="#i-hand"/></svg>
+          <h3>Consulta y recoge</h3>
+          <p>Con tu número sabes cuándo está listo, sin hacer fila.</p>
+          <a href="#consulta">Consultar mi pedido</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="status" aria-labelledby="estados">
+    <div class="wrap">
+      <h2 id="estados" style="font-size:clamp(28px,3.4vw,40px);margin-bottom:24px">Qué significa cada estado</h2>
+      <div class="chips">
+        <div class="chip"><svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg><div><b>Recibido</b><small>Está en la lista del camión</small></div></div>
+        <div class="chip"><svg class="i" aria-hidden="true"><use href="#i-fire"/></svg><div><b>En preparación</b><small>Está en la plancha</small></div></div>
+        <div class="chip hl"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><div><b>Listo para recoger</b><small>Acércate a la ventanilla</small></div></div>
+        <div class="chip"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><div><b>Entregado</b><small>Buen provecho</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lookup" id="consulta" aria-labelledby="consulta-t">
     <div class="wrap">
       <div class="panel">
         <div>
-          <h2>Consulta tu pedido</h2>
-          <p class="help">Escribe el número que te dimos al hacer el pedido. Lo encuentras en tu comprobante.</p>
+          <h2 id="consulta-t">Consulta tu pedido</h2>
+          <p>Escribe el número que aparece en tu comprobante.</p>
         </div>
         <form id="f" novalidate>
           <label for="n">Número de pedido</label>
+          <p class="hint" id="n-hint">Solo el número, por ejemplo 4.</p>
           <div class="row">
-            <input id="n" name="n" inputmode="numeric" autocomplete="off" placeholder="Ej. 4">
-            <button type="submit">Consultar estado</button>
+            <input id="n" name="n" inputmode="numeric" autocomplete="off" aria-describedby="n-hint n-err">
+            <button class="btn btn-primary" type="submit"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Consultar estado</button>
           </div>
-          <div class="result" id="r" role="status" aria-live="polite">Prueba con un número del 1 al 7.</div>
+          <p class="err" id="n-err" aria-live="polite"></p>
+          <div class="result" id="r" role="status" aria-live="polite"></div>
         </form>
       </div>
     </div>
   </section>
 </main>
 
-<footer><div class="wrap">
-  <span>Street Corner Eats</span>
-  <span>Las paradas cambian cada día. Revisa esta página antes de salir.</span>
-</div></footer>
+<section class="final" aria-labelledby="fin">
+  <div class="wrap">
+    <h2 id="fin">¿Ya sabes a qué esquina ir?</h2>
+    <a class="btn btn-light" href="#hoy"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Ver paradas de hoy</a>
+  </div>
+</section>
+<footer><div class="wrap">Street Corner Eats · Paradas y horarios de ejemplo; en la app saldrán de las rutas del día.</div></footer>
 
 <script>
 // Datos de ejemplo con la forma de GET /pedidos (src/data/mock_data.py).
-// En la app real esta consulta saldría de la API; las paradas, de las rutas del día.
 const pedidos = [
   { id: 1, camion_id: 1, cliente: "Ana Perez", estado: "Received" },
   { id: 2, camion_id: 2, cliente: "Luis Gomez", estado: "Preparing" },
@@ -167,32 +280,26 @@ const pedidos = [
   { id: 6, camion_id: 2, cliente: "Andres Velez", estado: "Picked Up" },
   { id: 7, camion_id: 1, cliente: "Laura Ochoa", estado: "Ready" }
 ];
-const texto = {
-  "Received": "Recibido. Ya está en la lista del camión.",
-  "Preparing": "En preparación. Está en la plancha.",
-  "Ready": "Listo para recoger. Acércate a la ventanilla.",
-  "Picked Up": "Entregado. Si no lo recibiste, habla con el camión."
+const estados = {
+  "Received":  { t: "Recibido", d: "Ya está en la lista del camión.", i: "i-receipt" },
+  "Preparing": { t: "En preparación", d: "Está en la plancha.", i: "i-fire" },
+  "Ready":     { t: "Listo para recoger", d: "Acércate a la ventanilla del camión.", i: "i-check" },
+  "Picked Up": { t: "Entregado", d: "Si no lo recibiste, habla con el camión.", i: "i-store" }
 };
-const r = document.getElementById("r");
+const input = document.getElementById("n"), err = document.getElementById("n-err"), r = document.getElementById("r");
+function fail(msg) { input.setAttribute("aria-invalid", "true"); err.textContent = msg; r.className = "result"; input.focus(); }
 document.getElementById("f").addEventListener("submit", e => {
   e.preventDefault();
-  const v = document.getElementById("n").value.trim().replace("#", "");
-  r.className = "result";
-  if (!/^\d+$/.test(v)) {
-    r.classList.add("err");
-    r.innerHTML = "<strong>Escribe solo el número</strong>Por ejemplo: 4.";
-    return;
-  }
+  const v = input.value.trim().replace("#", "");
+  if (!v) return fail("Escribe tu número de pedido.");
+  if (!/^\d+$/.test(v)) return fail("Usa solo números, por ejemplo 4.");
   const p = pedidos.find(x => x.id === Number(v));
-  if (!p) {
-    r.classList.add("err");
-    r.innerHTML = `<strong>No encontramos el pedido #${v}</strong>Revisa el número en tu comprobante o pregunta en el camión.`;
-    return;
-  }
+  if (!p) return fail(`No encontramos el pedido #${v}. Revisa tu comprobante o pregunta en el camión.`);
+  input.removeAttribute("aria-invalid"); err.textContent = "";
+  const s = estados[p.estado];
+  r.className = "result show" + (p.estado === "Ready" ? " ready" : "");
   // Solo el primer nombre: la consulta es pública.
-  const nombre = p.cliente.split(" ")[0];
-  if (p.estado === "Ready") r.classList.add("ready");
-  r.innerHTML = `<strong>Pedido #${p.id} de ${nombre} · Camión ${p.camion_id}</strong>${texto[p.estado]}`;
+  r.innerHTML = `<svg class="i" aria-hidden="true"><use href="#${s.i}"/></svg><div><strong>Pedido #${p.id} de ${p.cliente.split(" ")[0]}: ${s.t}</strong>Camión ${p.camion_id}. ${s.d}</div>`;
 });
 </script>
 </body>
