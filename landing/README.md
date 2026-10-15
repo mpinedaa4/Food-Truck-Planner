@@ -71,6 +71,28 @@ Ajustes tras revisar las capturas:
 - En los títulos, la tipografía unía "fi" en una ligadura minúscula. Se desactivaron las ligaduras.
 - En móvil el logo partía en dos líneas. Se redujo su tamaño.
 
+## Versión final: `final/index.html`
+
+La mejor versión combina dos skills, cada una para lo que hace mejor:
+
+| Skill | Para qué se usó |
+|---|---|
+| `ui-ux-pro-max` | Patrón de página (`restaurant food ordering` → Hero-Centric + Conversion), paleta y tipografía del `MASTER.md`, override de página en `design-system/street-corner-eats/pages/landing.md` (máximo 1–2 elementos animados por vista, respetar movimiento reducido) y reglas de UX: indicador de progreso, feedback al enviar, teclado numérico, error junto al campo, CTA fija en móvil |
+| `frontend-design` | La pieza memorable (ilustración SVG propia del camión llegando a la esquina), revisión contra lo genérico (se quitó la palabra resaltada en otro color del titular), copy desde el lado del cliente y crítica con capturas |
+
+Qué tiene de nuevo frente a `con_skill`:
+- Hero con una ilustración original del camión en la Calle 10, que entra rodando una sola vez al cargar (estática con movimiento reducido).
+- Paradas del día sobre una franja de asfalto, con el estado "Abierto hoy".
+- Sección "En la plancha hoy" con los productos que ya existen en los datos de ejemplo de la API. Sin precios inventados.
+- Consulta de pedido con estado de carga y una barra de progreso de 4 pasos que marca en qué va el pedido.
+- Navegación fija con enlaces a cada sección y, en móvil, un botón fijo "Consultar mi pedido" al alcance del pulgar.
+
+Crítica con capturas (una pasada):
+- El letrero del camión se salía del tablero amarillo; se ajustó el texto al ancho.
+- Los botones del hero tocaban la franja de asfalto; se agregó espacio.
+
+Verificado: sin scroll horizontal a 375, 768, 1024 y 1440 px; consulta probada con `4` (listo), `99` (no existe), `abc` y campo vacío.
+
 ## Notas
 
 - Las paradas y horarios son contenido de ejemplo. En la app real saldrían de las rutas del día.
