@@ -73,25 +73,49 @@ Ajustes tras revisar las capturas:
 
 ## Versión final: `final/index.html`
 
-La mejor versión combina dos skills, cada una para lo que hace mejor:
+La versión final usa seis skills. Cada una se revisó antes de usarla, con la misma plantilla del catálogo.
 
-| Skill | Para qué se usó |
+| Skill | Fuente y licencia | Para qué se usó |
+|---|---|---|
+| `ui-ux-pro-max` | nextlevelbuilder, MIT | Marca: paleta roja y tipografía Playfair Display SC + Karla del `MASTER.md`; override `pages/landing.md`; reglas de UX (progreso, carga, teclado numérico, error junto al campo) |
+| `design-taste-frontend` (taste-skill) | Leonxlnx, MIT | Dirección de arte con `draw.mjs` (sector restaurante, semilla 1346289235): **"The name as a monument"**, con el nombre partido a dos esquinas. House rules, `lint.mjs` y el inspector en navegador real (`inspect.mjs`) a 1440, 768 y 390 px |
+| `frontend-design` | Anthropic, Apache 2.0 | La idea desde el sujeto, el copy y la crítica con capturas |
+| `web-design-guidelines` | Vercel, MIT | Auditoría contra las Web Interface Guidelines, leídas de una copia fijada (commit `434b7f9`) en vez de descargarlas en cada uso |
+| `accessibility-audit` (AccessLint) | AccessLint, MIT | Método WCAG 2.2 AA. El motor se cambió por `axe-core@4.10.2` fijado, porque la skill instala `@latest` sin versión |
+| `webapp-testing` | Anthropic, Apache 2.0 | `verificar_landing.py`: 23 pruebas de interacción con Playwright |
+
+**La idea.** El nombre del cliente es "Street Corner Eats" y su condición es que cambia de esquina cada día. En la página, la esquina donde para el camión se vuelve el nombre partido a dos esquinas de la pantalla: "Street Corner" arriba a la izquierda y "Eats" abajo a la derecha, fijos mientras pasan las paradas del día.
+
+**Lo vivo.** Eliges Camión 1 o 2 y el letrero de calle cambia de esquina. La página calcula con la hora real de Medellín si está abierto, cuánto falta para que cierre o a qué hora abre. Hay enlace directo con `#camion-2`.
+
+**Secciones**, según la dirección de taste-skill:
+1. El nombre partido con el letrero de calle.
+2. Las dos esquinas de hoy.
+3. El menú como tabla en una sola talla, con los productos de los datos de ejemplo y sin precios inventados.
+4. Un acordeón de paneles en tonos de rojo, de oscuro a claro, con los 4 estados del pedido.
+5. La consulta de pedido con barra de progreso.
+6. Una banda roja donde toda la palabra "Ubícanos" es el botón.
+7. El pie, que abre con el nombre.
+
+### Resultados de las verificaciones
+
+| Verificación | Resultado |
 |---|---|
-| `ui-ux-pro-max` | Patrón de página (`restaurant food ordering` → Hero-Centric + Conversion), paleta y tipografía del `MASTER.md`, override de página en `design-system/street-corner-eats/pages/landing.md` (máximo 1–2 elementos animados por vista, respetar movimiento reducido) y reglas de UX: indicador de progreso, feedback al enviar, teclado numérico, error junto al campo, CTA fija en móvil |
-| `frontend-design` | La pieza memorable (ilustración SVG propia del camión llegando a la esquina), revisión contra lo genérico (se quitó la palabra resaltada en otro color del titular), copy desde el lado del cliente y crítica con capturas |
+| taste-skill `lint.mjs` | 0 fallas. 2 avisos por usar Playfair Display: se mantiene porque es la tipografía de marca de `ui-ux-pro-max` (`--keep palette,type`) |
+| taste-skill `inspect.mjs` | 1 falla y 1 aviso, explicados abajo. Ningún titular pasa de dos líneas, no hay texto tapado, no hay etiquetas sobre los títulos, 5 tallas de letra |
+| axe-core (WCAG 2.2 AA + buenas prácticas) | 0 violaciones a 1440 y 390 px. El contraste más bajo es 4.41:1, de "Eats" en rojo sobre el fondo, que a 216px cumple el mínimo de 3:1 para texto grande |
+| Web Interface Guidelines (Vercel) | Corregido: animación de layout en el acordeón, hover en sus botones y enlace directo al camión elegido |
+| `verificar_landing.py` (webapp-testing) | 23 de 23. Sin scroll horizontal a 1440, 1024, 768 y 390 px; selector con mouse, flechas y `#camion-2`; acordeón; consulta con 4, 2, 99, `abc` y vacío; movimiento reducido |
 
-Qué tiene de nuevo frente a `con_skill`:
-- Hero con una ilustración original del camión en la Calle 10, que entra rodando una sola vez al cargar (estática con movimiento reducido).
-- Paradas del día sobre una franja de asfalto, con el estado "Abierto hoy".
-- Sección "En la plancha hoy" con los productos que ya existen en los datos de ejemplo de la API. Sin precios inventados.
-- Consulta de pedido con estado de carga y una barra de progreso de 4 pasos que marca en qué va el pedido.
-- Navegación fija con enlaces a cada sección y, en móvil, un botón fijo "Consultar mi pedido" al alcance del pulgar.
+**Pendiente: fotos.** El inspector de taste-skill exige al menos 4 fotografías reales y sugiere un video. Su script `assets.mjs` las busca en Openverse, Wikimedia Commons y museos, pero la red de este entorno solo permite registros de paquetes. Por eso la página solo tiene dibujos SVG, que no cuentan. Con fotos reales de los camiones o de las esquinas, el siguiente paso es ponerlas en las paradas y en el pie.
 
-Crítica con capturas (una pasada):
-- El letrero del camión se salía del tablero amarillo; se ajustó el texto al ancho.
-- Los botones del hero tocaban la franja de asfalto; se agregó espacio.
+Ajustes que salieron de las capturas:
+- El nombre fijo invadía el menú al terminar su recorrido; se limitó a las dos primeras pantallas.
+- En el acordeón, los títulos de los paneles cerrados se desbordaban; ahora van en vertical.
+- En móvil, "Eats" tapaba el horario; ahora el nombre va en dos líneas sobre el contenido.
+- "Ubícanos" se cortaba en el borde derecho; se ajustó su tamaño.
 
-Verificado: sin scroll horizontal a 375, 768, 1024 y 1440 px; consulta probada con `4` (listo), `99` (no existe), `abc` y campo vacío.
+`final/index_v1.html` ya no existe: la primera versión final queda en el historial del PR #14.
 
 ## Notas
 

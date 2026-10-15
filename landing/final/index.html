@@ -4,342 +4,365 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Street Corner Eats</title>
-<meta name="description" content="Encuentra hoy los camiones de Street Corner Eats, mira qué hay en la plancha y consulta si tu pedido ya está listo.">
+<meta name="description" content="Los dos camiones de Street Corner Eats cambian de esquina cada día. Mira dónde están hoy, si están abiertos y en qué va tu pedido.">
+<meta name="theme-color" content="#FEF2F2">
+<link rel="preload" href="../fonts/playfair-display-sc-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/karla-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!--
-  Landing final. Skills usadas:
-  - ui-ux-pro-max: sistema de diseño (design-system/street-corner-eats/MASTER.md + pages/landing.md),
-    patrón Hero-Centric + Conversion, reglas de UX (progreso, feedback de envío, teclado numérico, nav fija).
-  - frontend-design: plan de diseño, revisión contra lo genérico, copy y crítica con capturas.
-  Proceso completo en landing/README.md.
+  Landing final. Skills usadas (detalle en landing/README.md):
+  - ui-ux-pro-max ......... paleta y tipografía de marca (design-system/street-corner-eats), reglas de UX
+  - design-taste-frontend .. dirección "The name as a monument" (semilla 1346289235), house rules, lint e inspector
+  - frontend-design ....... idea desde el sujeto, copy, crítica con capturas
+  - web-design-guidelines . auditoría Vercel (versión fijada 434b7f9)
+  - accesslint (método) ... auditoría WCAG 2.2 AA con motor axe-core fijado
+  - webapp-testing ........ pruebas de interacción con Playwright
+  Idea: la esquina donde para el camión hoy se convierte en el nombre partido a dos esquinas de la pantalla.
 -->
 <style>
-@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-700-normal.woff2); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-900-normal.woff2); font-weight: 900; font-display: swap; }
-@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-400-normal.woff2); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-500-normal.woff2); font-weight: 500; font-display: swap; }
-@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-700-normal.woff2); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Playfair Display SC"; src: url(../fonts/playfair-display-sc-latin-900-normal.woff2) format("woff2"); font-weight: 900; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(../fonts/karla-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 
-/* Layout: hero de calle con el camión llegando a la esquina, luego menú, 3 pasos y consulta de pedido. */
+/* Composición: el nombre partido a dos esquinas fijas mientras pasan "hoy" y "las paradas"; después menú en una sola talla, acordeón del pedido, banda de una palabra y pie con el nombre. */
 :root {
-  /* Master (ui-ux-pro-max) */
-  --primary: #DC2626;
-  --primary-ink: #B91C1C;
-  --gold: #A16207;
-  --gold-soft: #FDE68A;
+  /* Marca (ui-ux-pro-max, MASTER.md) */
   --bg: #FEF2F2;
-  --fg: #450A0A;
-  --card: #FFFFFF;
-  --muted: #5B4646;
-  --border: #FECACA;
-  /* Override de la página: color por paso */
-  --step-1: #DC2626;
-  --step-2: #C2410C;
-  --step-3: #15803D;
-  --step-3-soft: #DCFCE7;
-  /* Calle */
-  --asphalt: #2A1414;
-  --asphalt-line: #F5D36B;
+  --ink: #450A0A;
+  --ink-soft: #6B2B2B;
+  --accent: #DC2626;
+  --accent-press: #B91C1C;
+  --surface: #FCE3E3;
+  --field: #F9D2D2;
+  --open: #166534;
+  --open-bg: #DCFCE7;
+  --closed: #8A3A0B;
+  --closed-bg: #FEF3C7;
+  /* Acordeón: un tono de rojo de oscuro a claro */
+  --t1: #450A0A; --t2: #7F1D1D; --t3: #B91C1C; --t4: #FCA5A5;
   --display: "Playfair Display SC", Georgia, serif;
-  --body: "Karla", Arial, sans-serif;
-  --gutter: max(20px, env(safe-area-inset-left, 0px));
+  --text: "Karla", Arial, sans-serif;
+  /* Pasos de tipo: 5 */
+  --s-body: 18px; --s-lead: clamp(20px, 2.1vw, 30px); --s-h2: clamp(30px, 3vw, 40px); --s-small: 15px;
+  --m: max(24px, env(safe-area-inset-left, 0px));
+  --mr: max(24px, env(safe-area-inset-right, 0px));
+  --radius: 10px;
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; color-scheme: light; }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 18px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
-h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: 1.02; margin: 0; text-wrap: balance; font-variant-ligatures: no-common-ligatures; }
-a, button { cursor: pointer; }
-:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
-.wrap { max-width: 1200px; margin: 0 auto; padding-left: var(--gutter); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-.i { width: 24px; height: 24px; flex: none; }
+html { color-scheme: light; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (pointer: fine) { html { overscroll-behavior: none; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--s-body)/1.55 var(--text); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: rgba(220,38,38,.15); }
+a, button { touch-action: manipulation; }
+h1, h2, h3 { font-family: var(--display); font-weight: 900; margin: 0; line-height: 1; text-wrap: balance; font-variant-ligatures: no-common-ligatures; }
+h2 { font-size: var(--s-h2); letter-spacing: -.01em; }
+p { margin: 0; text-wrap: pretty; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+[id] { scroll-margin-top: 80px; }
+.skip { position: absolute; left: var(--m); top: -60px; z-index: 50; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: var(--radius); font-weight: 700; }
+.skip:focus { top: 12px; }
+.skip:not(:focus) { clip: rect(0 0 0 0); width: 1px; height: 1px; overflow: hidden; padding: 0; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Navegación fija */
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(254,242,242,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
-.nav .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 16px; }
-.logo { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 900; font-size: 24px; color: var(--fg); text-decoration: none; white-space: nowrap; }
-.logo svg { width: 34px; height: 34px; }
-.nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-weight: 700; }
-.nav ul a { color: var(--fg); text-decoration: none; padding: 10px 0; }
-.nav ul a:hover { color: var(--primary); }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 14px; border: 0; font: 700 17px var(--body); text-decoration: none; transition: background .2s, transform .2s var(--ease); }
-.btn:active { transform: translateY(1px); }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-ink); }
-.btn-ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 2px var(--fg); }
-.btn-ghost:hover { background: var(--fg); color: #fff; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: var(--radius); border: 2px solid var(--accent); background: var(--accent); color: #fff; font: 700 var(--s-body) var(--text); text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s, transform .15s var(--ease); }
+.btn:hover { background: var(--accent-press); border-color: var(--accent-press); }
+.btn:active { transform: translateY(2px); }
+.btn.alt { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn.alt:hover { background: var(--ink); color: var(--bg); }
 
-/* Hero: la calle */
-.hero { position: relative; overflow: hidden; padding-block: 56px 0; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-bottom: 56px; }
-.date { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--primary-ink); background: #FFE4E4; border-radius: 999px; padding: 6px 14px; }
-.hero h1 { font-size: clamp(52px, 7.6vw, 104px); margin-top: 18px; letter-spacing: -.01em; }
-.lede { font-size: 21px; color: var(--muted); max-width: 34ch; margin: 20px 0 28px; }
-.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-.scene { position: relative; min-width: 0; }
-.scene svg { width: 100%; height: auto; display: block; }
-.truck { animation: arrive 1.4s var(--ease) both; transform-origin: center; }
-.steam { animation: steam 2.4s ease-in-out 1.4s infinite; }
-@keyframes arrive { from { transform: translateX(-60%); } to { transform: none; } }
-@keyframes steam { 0%,100% { opacity: .55; transform: translateY(0); } 50% { opacity: .9; transform: translateY(-6px); } }
-.street { background: var(--asphalt); padding-block: 22px; margin-top: -6px; position: relative; }
-.street::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 6px; transform: translateY(-50%); background: repeating-linear-gradient(90deg, var(--asphalt-line) 0 56px, transparent 56px 96px); opacity: .9; }
-.stops { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.stop { background: var(--card); border-radius: 18px; padding: 20px 22px; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; box-shadow: 0 10px 0 rgba(0,0,0,.25); }
-.stop .num { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--primary); color: #fff; font-family: var(--display); font-weight: 900; font-size: 26px; }
-.stop b { display: block; font-size: 20px; line-height: 1.25; }
-.stop span { color: var(--muted); font-weight: 500; display: inline-flex; gap: 6px; align-items: center; }
-.stop span svg { width: 18px; height: 18px; color: var(--primary); }
-.open { font-weight: 700; font-size: 15px; color: var(--step-3); background: var(--step-3-soft); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+/* Enlaces en la esquina opuesta al nombre */
+.links { position: absolute; top: max(24px, env(safe-area-inset-top, 0px)); right: var(--mr); z-index: 6; display: flex; gap: 24px; font-weight: 700; }
+.links a { color: var(--ink); padding: 8px 0; text-decoration: underline 2px; text-underline-offset: 6px; text-decoration-color: transparent; transition: text-decoration-color .2s; }
+.links a:hover { text-decoration-color: currentColor; }
 
-/* Secciones */
-section.block { padding-block: 96px; }
-.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 36px; }
-.head h2 { font-size: clamp(38px, 5vw, 60px); }
-.head p { margin: 0; color: var(--muted); max-width: 44ch; }
+/* Nombre partido, fijo durante dos pantallas */
+.stage { position: relative; }
+.pin-track { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.pin { position: sticky; top: 0; height: 100svh; pointer-events: none; }
+.w1, .w2 { position: absolute; font-family: var(--display); font-weight: 900; color: var(--ink); line-height: .85; letter-spacing: -.045em; white-space: nowrap; }
+.w1 { left: var(--m); top: max(24px, env(safe-area-inset-top, 0px)); font-size: clamp(56px, 8.4vw, 132px); }
+.w2 { right: var(--mr); bottom: 28px; font-size: clamp(88px, 15vw, 240px); color: var(--accent); }
+.screen { min-height: 100svh; display: grid; align-content: center; padding: 24vh var(--mr) 30vh var(--m); position: relative; z-index: 3; }
 
-/* Menú */
-.menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; background: var(--card); border: 2px solid var(--fg); border-radius: 24px; overflow: hidden; }
-.dish { padding: 26px 28px; display: grid; gap: 6px; border-right: 2px dashed var(--border); border-bottom: 2px dashed var(--border); }
-.dish:nth-child(3n) { border-right: 0; }
-.dish:nth-last-child(-n+3) { border-bottom: 0; }
-.dish .tag { justify-self: start; font-size: 14px; font-weight: 700; color: var(--gold); background: #FEF3C7; padding: 3px 10px; border-radius: 999px; }
-.dish h3 { font-size: 28px; }
-.dish p { margin: 0; color: var(--muted); }
-.note { margin-top: 16px; color: var(--muted); font-size: 16px; }
+/* Pantalla 1: hoy */
+.today { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+.today .lead { font-size: var(--s-lead); line-height: 1.35; max-width: 26ch; }
+.today .lead b { font-weight: 700; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.picker { display: grid; gap: 14px; }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-height: 48px; border-radius: var(--radius); border: 2px solid var(--ink); background: transparent; color: var(--ink); font: 700 var(--s-body) var(--text); cursor: pointer; transition: background-color .15s, color .15s; }
+.tabs button:hover { background: var(--surface); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.sign { background: #166534; color: #fff; border-radius: 14px; padding: 26px 28px; border: 4px solid #fff; outline: 4px solid #166534; display: grid; gap: 4px; transform-origin: 50% 0; }
+.sign .street { font-family: var(--display); font-weight: 900; font-size: var(--s-h2); line-height: 1; }
+.sign .cross { font-family: var(--display); font-size: var(--s-lead); font-weight: 700; opacity: .92; }
+.sign.swap { animation: swing .6s var(--ease); }
+@keyframes swing { 0% { transform: rotate(-2.5deg); } 60% { transform: rotate(1deg); } 100% { transform: none; } }
+.meta { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-weight: 700; }
+.status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; }
+.status.on { background: var(--open-bg); color: var(--open); }
+.status.off { background: var(--closed-bg); color: var(--closed); }
+.hours { font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.post { height: 64px; width: 10px; margin-left: 40px; background: var(--ink); border-radius: 0 0 4px 4px; }
 
-/* Pasos */
-.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.step { border-radius: 24px; padding: 30px 28px 32px; color: #fff; display: grid; gap: 12px; align-content: start; }
-.step:nth-child(1) { background: var(--step-1); }
-.step:nth-child(2) { background: var(--step-2); }
-.step:nth-child(3) { background: var(--step-3); }
-.step .n { font-family: var(--display); font-weight: 900; font-size: 72px; line-height: .85; }
-.step h3 { font-size: 30px; }
-.step p { margin: 0; }
-.step a { color: #fff; font-weight: 700; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; text-underline-offset: 4px; }
+/* Pantalla 2: las dos esquinas, grandes */
+.corners { max-width: 1200px; margin: 0 auto; width: 100%; display: grid; gap: 40px; }
+.corner-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.corner { background: var(--ink); color: var(--bg); border-radius: 18px; padding: 32px; display: grid; gap: 14px; min-width: 0; }
+.corner .who { font-weight: 700; color: #FCA5A5; }
+.corner .where { font-family: var(--display); font-weight: 900; font-size: var(--s-h2); line-height: 1; }
+.corner .when { font-size: var(--s-lead); font-variant-numeric: tabular-nums; }
+.corner svg { width: 100%; height: auto; display: block; }
+
+/* Menú en una sola talla */
+.menu { background: var(--surface); padding-block: 112px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: var(--m); padding-right: var(--mr); }
+.menu-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; align-items: end; margin-bottom: 48px; }
+.menu-head p { font-size: var(--s-body); max-width: 46ch; justify-self: end; }
+.lineup { width: 100%; border-collapse: collapse; font-size: var(--s-lead); line-height: 1.5; font-variant-numeric: tabular-nums; }
+.lineup th { text-align: left; font: 700 var(--s-small) var(--text); color: var(--ink-soft); padding-bottom: 12px; }
+.lineup td { padding: 0; vertical-align: top; }
+.lineup td:nth-child(1) { width: 33%; }
+.lineup td:nth-child(2) { width: 33%; color: var(--ink-soft); }
+.lineup td:nth-child(3) { width: 20%; }
+.lineup td:nth-child(4), .lineup th:nth-child(4) { text-align: right; }
+.lineup tr.group td { padding-top: .9em; font-family: var(--display); font-weight: 900; color: var(--accent-press); }
+.menu .note { margin-top: 28px; font-size: var(--s-small); color: var(--ink-soft); }
+
+/* Cómo avanza tu pedido: acordeón de paneles teñidos */
+.flow { padding-block: 112px; }
+.flow-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; margin-bottom: 56px; align-items: end; }
+.flow-head p { max-width: 46ch; justify-self: end; }
+.accordion { display: flex; height: 520px; border-radius: 18px; overflow: hidden; }
+.panel { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; color: #fff; }
+.panel:nth-child(1) { background: var(--t1); } .panel:nth-child(2) { background: var(--t2); } .panel:nth-child(3) { background: var(--t3); } .panel:nth-child(4) { background: var(--t4); color: var(--ink); }
+.panel.open { flex-grow: 4.2; }
+.panel:not(.open) h3 { flex: 1; min-height: 0; }
+.panel:not(.open) button { writing-mode: vertical-rl; height: 100%; padding: 28px 0 28px; display: flex; align-items: center; white-space: nowrap; }
+.panel h3 { font-size: var(--s-lead); }
+.panel button { all: unset; box-sizing: border-box; cursor: pointer; display: block; width: 100%; padding: 28px 24px 0; font-family: var(--display); font-weight: 900; font-size: inherit; line-height: 1; }
+.panel button:hover { text-decoration: underline 3px; text-underline-offset: 6px; }
+.panel button:focus-visible { outline: 3px solid #fff; outline-offset: -6px; }
+.panel:nth-child(4) button:focus-visible { outline-color: var(--ink); }
+.panel .body { padding: 18px 24px 28px; margin-top: auto; display: grid; gap: 18px; max-width: 520px; }
+.panel:not(.open) .body { display: none; }
+.panel .body p { font-size: var(--s-body); }
+.panel .body p.big { font-family: var(--display); font-weight: 900; font-size: var(--s-h2); line-height: 1; }
 
 /* Consulta */
-.lookup { background: var(--fg); color: #fff; border-radius: 32px; padding: 48px; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; }
-.lookup h2 { font-size: clamp(36px, 4.5vw, 56px); }
-.lookup .sub { color: #FECACA; margin: 14px 0 0; max-width: 36ch; }
-form { display: grid; gap: 10px; align-content: start; }
-label { font-weight: 700; }
-.hint { margin: 0; color: #FECACA; font-size: 16px; }
+.lookup { margin-top: 72px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; align-items: start; }
+.lookup form { display: grid; gap: 10px; }
+.lookup label { font-weight: 700; }
 .row { display: flex; gap: 12px; }
-input { flex: 1; min-width: 0; min-height: 56px; padding: 0 18px; border-radius: 14px; border: 3px solid transparent; font: 500 22px var(--body); background: #fff; color: var(--fg); }
-input[aria-invalid="true"] { border-color: #FCA5A5; }
-.err { margin: 0; min-height: 26px; font-weight: 700; color: #FFE4E6; }
-.result { background: #fff; color: var(--fg); border-radius: 20px; padding: 22px; display: grid; gap: 16px; }
-.result[hidden] { display: none; }
-.result h3 { font-size: 26px; }
-.result p { margin: 0; color: var(--muted); }
-.track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.track li { display: grid; gap: 8px; font-size: 14px; font-weight: 700; color: #8C7373; }
-.track li::before { content: ""; height: 8px; border-radius: 999px; background: #F3E3E3; }
-.track li.done { color: var(--fg); }
-.track li.done::before { background: var(--primary); }
-.track li.now { color: var(--step-3); }
-.track li.now::before { background: var(--step-3); }
-.loading { display: inline-flex; gap: 10px; align-items: center; color: #FECACA; font-weight: 700; }
-.loading[hidden] { display: none; }
-.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #FECACA; border-top-color: transparent; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.lookup input { flex: 1; min-width: 0; min-height: 56px; padding: 0 18px; border-radius: var(--radius); border: 2px solid var(--ink); background: #fff; color: var(--ink); font: 500 var(--s-lead) var(--text); font-variant-numeric: tabular-nums; }
+.lookup input[aria-invalid="true"] { border-color: var(--accent); }
+.hint { color: var(--ink-soft); font-size: var(--s-small); }
+.err { min-height: 26px; color: var(--accent-press); font-weight: 700; }
+.result { background: var(--surface); border-radius: 18px; padding: 24px; display: grid; gap: 14px; }
+.result[hidden], .loading[hidden] { display: none; }
+.result h3 { font-size: var(--s-lead); }
+.track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: var(--s-small); font-weight: 700; }
+.track li { display: grid; gap: 8px; color: var(--ink-soft); }
+.track li::before { content: ""; height: 10px; border-radius: 999px; background: var(--field); }
+.track li.done { color: var(--ink); } .track li.done::before { background: var(--accent); }
+.track li.now { color: var(--open); } .track li.now::before { background: var(--open); }
+.loading { color: var(--ink-soft); font-weight: 700; }
 
-/* Cierre */
-.final { padding-block: 0 96px; }
-.final .card { border-radius: 32px; background: var(--gold-soft); padding: 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
-.final h2 { font-size: clamp(32px, 4.2vw, 52px); max-width: 16ch; }
-footer { border-top: 1px solid var(--border); padding-block: 28px; color: var(--muted); font-size: 16px; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+/* Banda: una palabra es el botón */
+.cta { display: block; position: relative; height: 60svh; min-height: 360px; background: var(--accent); color: #fff; text-decoration: none; overflow: hidden; transition: background-color .12s, color .12s; }
+.cta:hover, .cta:focus-visible { background: var(--ink); color: var(--bg); outline: none; }
+.cta .say { position: absolute; left: var(--m); top: 32px; font-size: var(--s-lead); font-weight: 700; max-width: 26ch; }
+.cta .arrow { position: absolute; right: var(--mr); top: 24px; width: 56px; height: 56px; transition: transform .25s var(--ease); }
+.cta:hover .arrow { transform: translate(6px, -6px); }
+.cta .word { position: absolute; left: var(--m); right: var(--mr); bottom: 20px; font-family: var(--display); font-weight: 900; font-size: clamp(80px, 17vw, 280px); line-height: .8; letter-spacing: -.05em; white-space: nowrap; }
 
-/* CTA fija en móvil (zona del pulgar) */
-.dock { display: none; }
+/* Pie: el nombre primero */
+footer { background: var(--ink); color: var(--bg); overflow: hidden; padding-bottom: 32px; }
+footer .name { font-family: var(--display); font-weight: 900; font-size: clamp(56px, 8.4vw, 132px); line-height: .9; letter-spacing: -.045em; white-space: nowrap; padding: 40px var(--mr) 0 var(--m); }
+.foot { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; padding: 64px var(--mr) 0 var(--m); max-width: 1280px; margin: 0 auto; }
+.places { display: grid; gap: 8px; font-size: var(--s-lead); }
+.places small { display: block; font-size: var(--s-small); color: #FCA5A5; }
+.fine { display: grid; gap: 12px; align-content: end; justify-items: end; text-align: right; font-size: var(--s-small); color: #F5C6C6; }
+.fine a { color: var(--bg); font-weight: 700; }
+
+/* Entradas: solo desplazamiento, el contenido siempre visible */
+.rise { transform: translateY(24px); transition: transform .7s var(--ease); }
+.rise.in, .js-off .rise { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .truck, .steam, .spinner { animation: none; }
-  .btn { transition: none; }
+  .rise { transform: none; transition: none; }
+  .sign.swap { animation: none; }
+  .links a, .btn, .cta, .cta .arrow { transition: none; }
 }
 @media (max-width: 960px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .scene { max-width: 560px; }
-  .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .dish:nth-child(3n) { border-right: 2px dashed var(--border); }
-  .dish:nth-child(2n) { border-right: 0; }
-  .dish:nth-last-child(-n+3) { border-bottom: 2px dashed var(--border); }
-  .dish:nth-last-child(-n+2) { border-bottom: 0; }
-  .steps { grid-template-columns: 1fr; }
-  .lookup { grid-template-columns: 1fr; padding: 32px; }
+  .today, .menu-head, .flow-head, .lookup, .foot { grid-template-columns: 1fr; }
+  .menu-head p, .flow-head p { justify-self: start; }
+  .corner-list { grid-template-columns: 1fr; }
+  .fine { justify-items: start; text-align: left; }
+  .pin-track { position: static; }
+  .pin { position: static; height: auto; display: grid; padding: max(16px, env(safe-area-inset-top, 0px)) var(--mr) 0 var(--m); }
+  .w1, .w2 { position: static; line-height: 1.05; }
+  .w2 { justify-self: end; margin-top: 8px; }
+  #hoy.screen { min-height: 0; padding-top: 40px; padding-bottom: 72px; }
+  .accordion { flex-direction: column; height: auto; }
+  .panel { flex: none !important; }
+  .panel button, .panel:not(.open) button { writing-mode: horizontal-tb; padding: 20px; min-height: 64px; width: 100%; height: auto; display: block; }
+  .panel:not(.open) h3 { flex: none; }
+  .panel .body { padding: 0 20px 24px; }
 }
 @media (max-width: 720px) {
-  .nav ul, .nav .btn { display: none; }
-  .stops { grid-template-columns: 1fr; }
-  .stop { grid-template-columns: auto 1fr; }
-  .stop .open { grid-column: 2; justify-self: start; }
-  .menu { grid-template-columns: 1fr; }
-  .dish { border-right: 0 !important; border-bottom: 2px dashed var(--border) !important; }
-  .dish:last-child { border-bottom: 0 !important; }
-  section.block { padding-block: 64px; }
+  :root { --m: max(16px, env(safe-area-inset-left, 0px)); --mr: max(16px, env(safe-area-inset-right, 0px)); }
+  .links { display: none; }
+  .w1 { font-size: 12vw; }
+  .w2 { font-size: 30vw; }
+  .screen { padding: 22svh var(--mr) 26svh var(--m); }
+  .lineup thead { display: none; }
+  .lineup, .lineup tbody, .lineup tr, .lineup td { display: block; width: auto !important; }
+  .lineup tr:not(.group) { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; margin-bottom: 18px; }
+  .lineup td:nth-child(1) { font-size: var(--s-lead); grid-column: 1 / -1; }
+  .lineup td:nth-child(2) { font-size: 15px; grid-column: 1 / -1; }
+  .lineup td:nth-child(3), .lineup td:nth-child(4) { font-size: 15px; color: var(--ink-soft); }
+  .lineup td:nth-child(4) { text-align: right; }
+  .accordion { flex-direction: column; height: auto; }
+  .panel { flex: none !important; }
+  .panel h3 { font-size: var(--s-lead); }
+  .panel button { padding: 20px; min-height: 64px; }
+  .panel .body { padding: 0 20px 24px; }
   .row { flex-direction: column; }
-  .lookup { padding: 24px; border-radius: 24px; }
-  .final .card { padding: 28px; }
-  body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
-  .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: rgba(254,242,242,.96); border-top: 1px solid var(--border); }
-  .dock .btn { width: 100%; }
+  .cta { height: 46svh; }
+  .cta .word { font-size: 18.5vw; }
+  .menu, .flow { padding-block: 72px; }
 }
 </style>
 </head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <!-- Íconos Phosphor (bold, MIT) sugeridos por la búsqueda de íconos de ui-ux-pro-max -->
-  <symbol id="i-pin" viewBox="0 0 256 256"><path fill="currentColor" d="M128,60a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,60Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,124Zm0-112a92.1,92.1,0,0,0-92,92c0,77.36,81.64,135.4,85.12,137.83a12,12,0,0,0,13.76,0,259,259,0,0,0,42.18-39C205.15,170.57,220,136.37,220,104A92.1,92.1,0,0,0,128,12Zm31.3,174.71A249.35,249.35,0,0,1,128,216.89a249.35,249.35,0,0,1-31.3-30.18C80,167.37,60,137.31,60,104a68,68,0,0,1,136,0C196,137.31,176,167.37,159.3,186.71Z"/></symbol>
-  <symbol id="i-clock" viewBox="0 0 256 256"><path fill="currentColor" d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm68-84a12,12,0,0,1-12,12H128a12,12,0,0,1-12-12V72a12,12,0,0,1,24,0v44h44A12,12,0,0,1,196,128Z"/></symbol>
-  <symbol id="i-search" viewBox="0 0 256 256"><path fill="currentColor" d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></symbol>
-  <symbol id="i-receipt" viewBox="0 0 256 256"><path fill="currentColor" d="M68,100A12,12,0,0,1,80,88h96a12,12,0,0,1,0,24H80A12,12,0,0,1,68,100Zm12,52h96a12,12,0,0,0,0-24H80a12,12,0,0,0,0,24ZM236,56V208a12,12,0,0,1-17.37,10.73L192,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L128,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L64,205.42,37.37,218.73A12,12,0,0,1,20,208V56A20,20,0,0,1,40,36H216A20,20,0,0,1,236,56Zm-24,4H44V188.58l14.63-7.31a12,12,0,0,1,10.74,0L96,194.58l26.63-13.31a12,12,0,0,1,10.74,0L160,194.58l26.63-13.31a12,12,0,0,1,10.74,0L212,188.58Z"/></symbol>
-  <symbol id="i-hand" viewBox="0 0 256 256"><path fill="currentColor" d="M188,76a31.85,31.85,0,0,0-11.21,2,32,32,0,0,0-48.79-11A32,32,0,0,0,76,92v16H68a32,32,0,0,0-32,32v12a92,92,0,0,0,184,0V108A32,32,0,0,0,188,76Zm8,76a68,68,0,0,1-136,0V140a8,8,0,0,1,8-8h8v20a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V108a8,8,0,0,1,16,0Z"/></symbol>
-</svg>
+<body class="js-off">
+<a class="skip" href="#hoy">Saltar al contenido</a>
 
-<header class="nav">
-  <div class="wrap">
-    <a class="logo" href="#inicio">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="10" width="28" height="18" rx="5" fill="#DC2626"/><path d="M30 15h4l4 6v7h-8z" fill="#450A0A"/><rect x="7" y="13" width="14" height="7" rx="2" fill="#FDE68A"/><circle cx="11" cy="31" r="4" fill="#450A0A"/><circle cx="31" cy="31" r="4" fill="#450A0A"/></svg>
-      Street Corner Eats
-    </a>
-    <nav aria-label="Secciones">
-      <ul>
-        <li><a href="#paradas">Paradas</a></li>
-        <li><a href="#menu">Menú</a></li>
-        <li><a href="#como">Cómo pedir</a></li>
-      </ul>
-    </nav>
-    <a class="btn btn-primary" href="#consulta"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Consultar mi pedido</a>
+<nav class="links" aria-label="Secciones">
+  <a href="#menu">Menú</a>
+  <a href="#pedido">Pedido</a>
+  <a class="keep" href="#paradas">Paradas</a>
+</nav>
+
+<main id="contenido">
+  <div class="stage">
+    <div class="pin-track" aria-hidden="true"><div class="pin">
+      <span class="w1" translate="no">Street Corner</span>
+      <span class="w2" translate="no">Eats</span>
+    </div></div>
+    <h1 class="sr" translate="no">Street Corner Eats</h1>
+
+    <section class="screen" id="hoy" aria-label="Dónde estamos hoy">
+      <div class="today">
+        <div class="rise">
+          <p class="lead">Dos camiones, una esquina distinta cada día. Hoy es <span id="hoy-fecha">jueves 28 de agosto</span>.</p>
+          <div class="actions">
+            <a class="btn" href="#pedido">Consultar mi pedido</a>
+            <a class="btn alt" href="#menu">Ver el menú</a>
+          </div>
+        </div>
+        <div class="picker rise">
+          <div class="tabs" role="tablist" aria-label="Elige un camión">
+            <button role="tab" id="tab-1" aria-selected="true" aria-controls="sign" data-truck="1">Camión 1</button>
+            <button role="tab" id="tab-2" aria-selected="false" aria-controls="sign" data-truck="2" tabindex="-1">Camión 2</button>
+          </div>
+          <div id="sign" role="tabpanel" aria-labelledby="tab-1" aria-live="polite">
+            <div class="sign" id="sign-box">
+              <span class="street" id="s-street">Calle 10</span>
+              <span class="cross" id="s-cross">con Carrera 43</span>
+            </div>
+            <div class="post" aria-hidden="true"></div>
+            <div class="meta">
+              <span class="status on" id="s-status">Abierto ahora</span>
+              <span class="hours" id="s-hours">11:30 a. m. a 3:00 p. m.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="paradas" aria-labelledby="paradas-t">
+      <div class="corners">
+        <h2 id="paradas-t" class="rise">Las dos esquinas de hoy</h2>
+        <div class="corner-list">
+          <article class="corner rise">
+            <span class="where">Calle 10 con Carrera 43</span>
+            <span class="when">Camión 1, de 11:30 a. m. a 3:00 p. m.</span>
+            <svg viewBox="0 0 400 90" aria-hidden="true"><rect y="58" width="400" height="32" fill="#2A1414"/><g fill="#F5D36B"><rect x="10" y="72" width="40" height="5" rx="2"/><rect x="90" y="72" width="40" height="5" rx="2"/><rect x="170" y="72" width="40" height="5" rx="2"/><rect x="250" y="72" width="40" height="5" rx="2"/><rect x="330" y="72" width="40" height="5" rx="2"/></g><rect x="40" y="14" width="150" height="40" rx="9" fill="#DC2626"/><path d="M190 24h26l14 20v10h-40z" fill="#FCA5A5"/><rect x="62" y="22" width="70" height="16" rx="3" fill="#FDE68A"/><circle cx="76" cy="56" r="9" fill="#FEF2F2"/><circle cx="200" cy="56" r="9" fill="#FEF2F2"/></svg>
+          </article>
+          <article class="corner rise">
+            <span class="where">Parque de los Deseos</span>
+            <span class="when">Camión 2, de 12:00 m. a 4:00 p. m.</span>
+            <svg viewBox="0 0 400 90" aria-hidden="true"><rect y="58" width="400" height="32" fill="#2A1414"/><g fill="#F5D36B"><rect x="10" y="72" width="40" height="5" rx="2"/><rect x="90" y="72" width="40" height="5" rx="2"/><rect x="170" y="72" width="40" height="5" rx="2"/><rect x="250" y="72" width="40" height="5" rx="2"/><rect x="330" y="72" width="40" height="5" rx="2"/></g><circle cx="300" cy="30" r="24" fill="#166534"/><rect x="296" y="40" width="8" height="18" fill="#FCA5A5"/><rect x="60" y="14" width="150" height="40" rx="9" fill="#DC2626"/><path d="M210 24h26l14 20v10h-40z" fill="#FCA5A5"/><rect x="82" y="22" width="70" height="16" rx="3" fill="#FDE68A"/><circle cx="96" cy="56" r="9" fill="#FEF2F2"/><circle cx="220" cy="56" r="9" fill="#FEF2F2"/></svg>
+          </article>
+        </div>
+      </div>
+    </section>
   </div>
-</header>
 
-<main id="inicio">
-  <section class="hero" aria-labelledby="titulo">
-    <div class="wrap hero-grid">
-      <div>
-        <span class="date"><svg class="i" style="width:18px;height:18px" aria-hidden="true"><use href="#i-clock"/></svg>Jueves 28 de agosto</span>
-        <h1 id="titulo">Hoy estamos en dos esquinas.</h1>
-        <p class="lede">Busca el camión más cercano, pide en la ventanilla y consulta aquí cuándo está listo tu pedido.</p>
-        <div class="ctas">
-          <a class="btn btn-primary" href="#paradas"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Ver paradas de hoy</a>
-          <a class="btn btn-ghost" href="#consulta">Consultar mi pedido</a>
+  <section class="menu" id="menu" aria-labelledby="menu-t">
+    <div class="wrap">
+      <div class="menu-head">
+        <h2 id="menu-t" class="rise">En la plancha hoy</h2>
+        <p class="rise">Los dos camiones cocinan lo mismo. Si algo se acaba, te avisamos en la ventanilla.</p>
+      </div>
+      <table class="lineup">
+        <caption class="sr">Menú de hoy en los dos camiones</caption>
+        <thead class="sr"><tr><th scope="col">Plato</th><th scope="col">Qué lleva</th><th scope="col">Dónde</th><th scope="col">Horario</th></tr></thead>
+        <tbody>
+          <tr class="group"><td colspan="4">De la plancha</td></tr>
+          <tr class="rise"><td>Taco de pastor</td><td>Cerdo al pastor, piña, cilantro</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+          <tr class="rise"><td>Quesadilla</td><td>Tortilla de harina y queso</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+          <tr class="rise"><td>Burrito de res</td><td>Res desmechada, arroz, frijol</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+          <tr class="rise"><td>Nachos</td><td>Totopos, queso fundido, pico de gallo</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+          <tr class="group"><td colspan="4">Para tomar</td></tr>
+          <tr class="rise"><td>Limonada</td><td>Natural, bien fría</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+          <tr class="rise"><td>Agua</td><td>En botella</td><td>Camión 1 y 2</td><td>Todo el día</td></tr>
+        </tbody>
+      </table>
+      <p class="note rise">Precios en la ventanilla de cada camión.</p>
+    </div>
+  </section>
+
+  <section class="flow" id="pedido" aria-labelledby="pedido-t">
+    <div class="wrap">
+      <div class="flow-head">
+        <h2 id="pedido-t" class="rise">Así avanza tu pedido</h2>
+        <p class="rise">Pides en la ventanilla y te damos un número. Con ese número sabes desde tu celular cuándo acercarte, sin hacer fila.</p>
+      </div>
+      <div class="accordion rise" id="acc">
+        <div class="panel open">
+          <h3><button aria-expanded="true" aria-controls="p1" id="b1">Recibido</button></h3>
+          <div class="body" id="p1" role="region" aria-labelledby="b1"><p class="big">Ya estás en la lista.</p><p>El camión recibió tu pedido y lo puso en fila para la plancha.</p></div>
+        </div>
+        <div class="panel">
+          <h3><button aria-expanded="false" aria-controls="p2" id="b2">Preparando</button></h3>
+          <div class="body" id="p2" role="region" aria-labelledby="b2"><p class="big">En la plancha.</p><p>Tu pedido se está cocinando. Falta poco.</p></div>
+        </div>
+        <div class="panel">
+          <h3><button aria-expanded="false" aria-controls="p3" id="b3">Listo</button></h3>
+          <div class="body" id="p3" role="region" aria-labelledby="b3"><p class="big">Acércate a la ventanilla.</p><p>Di tu número y te lo entregamos.</p></div>
+        </div>
+        <div class="panel">
+          <h3><button aria-expanded="false" aria-controls="p4" id="b4">Entregado</button></h3>
+          <div class="body" id="p4" role="region" aria-labelledby="b4"><p class="big">Buen provecho.</p><p>Si no lo recibiste, habla con el camión.</p></div>
         </div>
       </div>
-      <div class="scene">
-        <svg viewBox="0 0 560 360" role="img" aria-label="Ilustración de un food truck rojo estacionado en una esquina con el toldo abierto">
-          <rect x="0" y="0" width="560" height="360" fill="#FEF2F2"/>
-          <!-- edificios -->
-          <rect x="20" y="40" width="120" height="250" rx="6" fill="#FDE68A"/>
-          <rect x="150" y="90" width="90" height="200" rx="6" fill="#FECACA"/>
-          <rect x="420" y="20" width="120" height="270" rx="6" fill="#F5D0B5"/>
-          <g fill="#FEF2F2" opacity=".85">
-            <rect x="40" y="65" width="30" height="34" rx="3"/><rect x="90" y="65" width="30" height="34" rx="3"/>
-            <rect x="40" y="120" width="30" height="34" rx="3"/><rect x="90" y="120" width="30" height="34" rx="3"/>
-            <rect x="168" y="112" width="24" height="28" rx="3"/><rect x="202" y="112" width="24" height="28" rx="3"/>
-            <rect x="440" y="45" width="30" height="34" rx="3"/><rect x="490" y="45" width="30" height="34" rx="3"/>
-            <rect x="440" y="100" width="30" height="34" rx="3"/><rect x="490" y="100" width="30" height="34" rx="3"/>
-          </g>
-          <!-- señal de calle -->
-          <rect x="378" y="110" width="6" height="182" fill="#450A0A"/>
-          <rect x="330" y="96" width="104" height="30" rx="5" fill="#15803D"/>
-          <text x="382" y="117" text-anchor="middle" font-family="Karla, Arial, sans-serif" font-weight="700" font-size="15" fill="#FFFFFF">Calle 10</text>
-          <!-- andén -->
-          <rect x="0" y="290" width="560" height="14" fill="#E9C9C9"/>
-          <rect x="0" y="304" width="560" height="56" fill="#2A1414"/>
-          <!-- camión -->
-          <g class="truck">
-            <g class="steam" fill="#FFFFFF">
-              <circle cx="150" cy="120" r="10"/><circle cx="166" cy="108" r="13"/><circle cx="184" cy="118" r="9"/>
-            </g>
-            <rect x="60" y="150" width="270" height="130" rx="22" fill="#DC2626"/>
-            <path d="M330 178h52c10 0 18 5 22 13l26 42c3 5 4 10 4 15v26a6 6 0 0 1-6 6H330z" fill="#B91C1C"/>
-            <path d="M342 190h38l24 40h-62z" fill="#FEF2F2" opacity=".9"/>
-            <rect x="96" y="176" width="170" height="64" rx="10" fill="#450A0A"/>
-            <rect x="106" y="186" width="150" height="44" rx="6" fill="#FDE68A"/>
-            <!-- toldo -->
-            <path d="M86 160h190l-14 26H100z" fill="#FFFFFF"/>
-            <g fill="#A16207"><path d="M100 160h22l-6 26h-16z"/><path d="M144 160h22l-3 26h-16z"/><path d="M188 160h22l0 26h-16z"/><path d="M232 160h22l3 26h-16z"/></g>
-            <text x="181" y="216" text-anchor="middle" font-family="'Playfair Display SC', Georgia, serif" font-weight="900" font-size="18" fill="#450A0A" textLength="128" lengthAdjust="spacingAndGlyphs">Tacos y burritos</text>
-            <rect x="60" y="252" width="374" height="10" fill="#7F1D1D" opacity=".35"/>
-            <circle cx="130" cy="286" r="26" fill="#2A1414"/><circle cx="130" cy="286" r="11" fill="#E5E5E5"/>
-            <circle cx="372" cy="286" r="26" fill="#2A1414"/><circle cx="372" cy="286" r="11" fill="#E5E5E5"/>
-          </g>
-          <!-- líneas de la vía -->
-          <g fill="#F5D36B"><rect x="20" y="330" width="60" height="6" rx="3"/><rect x="120" y="330" width="60" height="6" rx="3"/><rect x="220" y="330" width="60" height="6" rx="3"/><rect x="320" y="330" width="60" height="6" rx="3"/><rect x="420" y="330" width="60" height="6" rx="3"/></g>
-        </svg>
-      </div>
-    </div>
-    <div class="street" id="paradas">
-      <div class="wrap">
-        <h2 class="sr">Paradas de hoy</h2>
-        <div class="stops">
-          <article class="stop">
-            <span class="num" aria-hidden="true">1</span>
-            <div><b>Camión 1 · Calle 10 con Carrera 43</b><span><svg aria-hidden="true"><use href="#i-clock"/></svg>11:30 a. m. a 3:00 p. m.</span></div>
-            <span class="open">Abierto hoy</span>
-          </article>
-          <article class="stop">
-            <span class="num" aria-hidden="true">2</span>
-            <div><b>Camión 2 · Parque de los Deseos</b><span><svg aria-hidden="true"><use href="#i-clock"/></svg>12:00 m. a 4:00 p. m.</span></div>
-            <span class="open">Abierto hoy</span>
-          </article>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="block" id="menu" aria-labelledby="menu-t">
-    <div class="wrap">
-      <div class="head">
-        <h2 id="menu-t">En la plancha hoy</h2>
-        <p>Lo que preparan los dos camiones. Si algo se acaba, te lo decimos en la ventanilla.</p>
-      </div>
-      <div class="menu">
-        <article class="dish"><span class="tag">El más pedido</span><h3>Taco de pastor</h3><p>Cerdo al pastor con piña, cebolla y cilantro.</p></article>
-        <article class="dish"><span class="tag">Para compartir</span><h3>Nachos</h3><p>Totopos con queso fundido y pico de gallo.</p></article>
-        <article class="dish"><span class="tag">Con queso</span><h3>Quesadilla</h3><p>Tortilla de harina con queso derretido.</p></article>
-        <article class="dish"><span class="tag">Llenador</span><h3>Burrito de res</h3><p>Res desmechada, arroz y frijol.</p></article>
-        <article class="dish"><span class="tag">Bebida</span><h3>Limonada</h3><p>Limonada natural bien fría.</p></article>
-        <article class="dish"><span class="tag">Bebida</span><h3>Agua</h3><p>Agua en botella.</p></article>
-      </div>
-      <p class="note">Precios en la ventanilla de cada camión.</p>
-    </div>
-  </section>
-
-  <section class="block" id="como" aria-labelledby="como-t" style="padding-top:0">
-    <div class="wrap">
-      <div class="head">
-        <h2 id="como-t">Tu almuerzo en 3 pasos</h2>
-        <p>Sin apps ni registros.</p>
-      </div>
-      <div class="steps">
-        <article class="step"><span class="n" aria-hidden="true">1</span><h3>Encuentra el camión</h3><p>Las paradas cambian cada día. Revísalas antes de salir.</p><a href="#paradas">Ver paradas</a></article>
-        <article class="step"><span class="n" aria-hidden="true">2</span><h3>Pide en la ventanilla</h3><p>Te damos un número de pedido en tu comprobante.</p><a href="#menu">Ver el menú</a></article>
-        <article class="step"><span class="n" aria-hidden="true">3</span><h3>Consulta y recoge</h3><p>Con tu número sabes cuándo está listo, sin hacer fila.</p><a href="#consulta">Consultar mi pedido</a></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="block" id="consulta" aria-labelledby="consulta-t" style="padding-top:0">
-    <div class="wrap">
       <div class="lookup">
-        <div>
-          <h2 id="consulta-t">Consulta tu pedido</h2>
-          <p class="sub">Escribe el número de tu comprobante y te mostramos en qué paso va.</p>
-        </div>
-        <form id="f" novalidate>
+        <h2 id="consulta-t" class="rise">Consulta tu pedido</h2>
+        <form class="rise" id="f" novalidate aria-labelledby="consulta-t">
           <label for="n">Número de pedido</label>
-          <p class="hint" id="n-hint">Solo el número, por ejemplo 4.</p>
+          <p class="hint" id="n-hint">Está en tu comprobante. Prueba con un número del 1 al 7.</p>
           <div class="row">
-            <input id="n" name="n" inputmode="numeric" autocomplete="off" aria-describedby="n-hint n-err">
-            <button class="btn btn-primary" type="submit"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Consultar estado</button>
+            <input id="n" name="numero_pedido" inputmode="numeric" pattern="[0-9]*" autocomplete="off" spellcheck="false" placeholder="Por ejemplo, 4…" aria-describedby="n-hint n-err">
+            <button class="btn" type="submit" id="go">Consultar estado</button>
           </div>
           <p class="err" id="n-err" aria-live="polite"></p>
-          <p class="loading" id="load" hidden><span class="spinner" aria-hidden="true"></span>Buscando tu pedido…</p>
+          <p class="loading" id="load" hidden>Buscando tu pedido…</p>
           <div class="result" id="r" role="status" aria-live="polite" hidden>
             <h3 id="r-t"></h3>
             <p id="r-d"></p>
@@ -352,27 +375,93 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     </div>
   </section>
 
-  <section class="final" aria-labelledby="fin">
-    <div class="wrap">
-      <div class="card">
-        <h2 id="fin">¿Ya sabes a qué esquina ir?</h2>
-        <a class="btn btn-primary" href="#paradas"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Ver paradas de hoy</a>
-      </div>
-    </div>
-  </section>
+  <a class="cta" href="#paradas">
+    <span class="say">Mira las dos esquinas de hoy y elige la que te quede más cerca.</span>
+    <svg class="arrow" viewBox="0 0 56 56" aria-hidden="true"><path d="M14 42 42 14M20 14h22v22" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word" aria-hidden="true">Ubícanos</span>
+  </a>
 </main>
 
 <footer>
-  <div class="wrap">
-    <span>Street Corner Eats</span>
-    <span>Paradas, horarios y pedidos de ejemplo. En la app saldrán de las rutas y pedidos del día.</span>
+  <p class="name" translate="no">Street Corner Eats</p>
+  <div class="foot">
+    <div class="places rise">
+      <span>Calle 10 con Carrera 43<small>Camión 1, de 11:30 a. m. a 3:00 p. m.</small></span>
+      <span>Parque de los Deseos<small>Camión 2, de 12:00 m. a 4:00 p. m.</small></span>
+    </div>
+    <div class="fine rise">
+      <p>Paradas, horarios y pedidos de ejemplo. En la app saldrán de las rutas y los pedidos del día.</p>
+      <a href="#hoy">Volver arriba</a>
+    </div>
   </div>
 </footer>
 
-<div class="dock"><a class="btn btn-primary" href="#consulta"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Consultar mi pedido</a></div>
-
 <script>
-// Datos de ejemplo con la forma de GET /pedidos (src/data/mock_data.py).
+document.body.classList.remove("js-off");
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+
+// Fecha de hoy con Intl, en la zona horaria del negocio.
+const TZ = "America/Bogota";
+$("hoy-fecha").textContent = new Intl.DateTimeFormat("es-CO", { weekday: "long", day: "numeric", month: "long", timeZone: TZ }).format(new Date());
+
+// Lo vivo: elegir camión y ver si está abierto ahora, con la hora real de Medellín.
+const trucks = {
+  1: { street: "Calle 10", cross: "con Carrera 43", open: [11, 30], close: [15, 0] },
+  2: { street: "Parque de los Deseos", cross: "frente al planetario", open: [12, 0], close: [16, 0] }
+};
+const fmt = new Intl.DateTimeFormat("es-CO", { hour: "numeric", minute: "2-digit", timeZone: "UTC" });
+const hhmm = ([h, m]) => fmt.format(new Date(Date.UTC(2026, 0, 1, h, m)));
+function nowMinutes() {
+  const p = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: TZ }).formatToParts(new Date());
+  return Number(p.find(x => x.type === "hour").value) * 60 + Number(p.find(x => x.type === "minute").value);
+}
+function showTruck(id) {
+  const t = trucks[id];
+  $("s-street").textContent = t.street;
+  $("s-cross").textContent = t.cross;
+  $("s-hours").textContent = `${hhmm(t.open)} a ${hhmm(t.close)}`;
+  const now = nowMinutes(), o = t.open[0] * 60 + t.open[1], c = t.close[0] * 60 + t.close[1];
+  const s = $("s-status");
+  if (now >= o && now < c) {
+    const left = c - now, h = Math.floor(left / 60), m = left % 60;
+    s.className = "status on";
+    s.textContent = `Abierto ahora, cierra en ${h ? h + " h " : ""}${m} min`;
+  } else {
+    s.className = "status off";
+    s.textContent = now < o ? `Abre hoy a las ${hhmm(t.open)}` : "Cerrado por hoy";
+  }
+  document.querySelectorAll("[data-truck]").forEach(b => {
+    const on = b.dataset.truck === String(id);
+    b.setAttribute("aria-selected", String(on));
+    b.tabIndex = on ? 0 : -1;
+  });
+  $("sign").setAttribute("aria-labelledby", "tab-" + id);
+  if (location.hash.startsWith("#camion-") && location.hash !== "#camion-" + id) history.replaceState(null, "", "#camion-" + id);
+  const box = $("sign-box");
+  if (!reduce) { box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap"); }
+}
+document.querySelectorAll("[data-truck]").forEach(b => b.addEventListener("click", () => showTruck(b.dataset.truck)));
+$("tab-1").parentElement.addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  e.preventDefault();
+  const next = document.activeElement.id === "tab-1" ? "tab-2" : "tab-1";
+  $(next).focus(); showTruck($(next).dataset.truck);
+});
+// Enlace directo a un camión: #camion-2
+showTruck(location.hash === "#camion-2" ? 2 : 1);
+addEventListener("hashchange", () => { if (location.hash === "#camion-1" || location.hash === "#camion-2") showTruck(location.hash.slice(-1)); });
+
+// Acordeón: un panel abierto a la vez.
+document.querySelectorAll("#acc .panel button").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("#acc .panel").forEach(p => {
+    const me = p.contains(btn);
+    p.classList.toggle("open", me);
+    p.querySelector("button").setAttribute("aria-expanded", String(me));
+  });
+}));
+
+// Consulta de pedido. Datos de ejemplo con la forma de GET /pedidos (src/data/mock_data.py).
 const pedidos = [
   { id: 1, camion_id: 1, cliente: "Ana Perez", estado: "Received" },
   { id: 2, camion_id: 2, cliente: "Luis Gomez", estado: "Preparing" },
@@ -384,47 +473,48 @@ const pedidos = [
 ];
 const orden = ["Received", "Preparing", "Ready", "Picked Up"];
 const texto = {
-  "Received":  ["Recibido", "Ya está en la lista del camión."],
+  "Received": ["Recibido", "Ya está en la lista del camión."],
   "Preparing": ["En preparación", "Está en la plancha. Falta poco."],
-  "Ready":     ["Listo para recoger", "Acércate a la ventanilla del camión."],
+  "Ready": ["Listo para recoger", "Acércate a la ventanilla del camión."],
   "Picked Up": ["Entregado", "Si no lo recibiste, habla con el camión."]
 };
-const $ = id => document.getElementById(id);
-const input = $("n"), err = $("n-err"), load = $("load"), r = $("r");
-const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-function fail(msg) {
-  input.setAttribute("aria-invalid", "true");
-  err.textContent = msg;
-  r.hidden = true;
-  input.focus();
-}
+const input = $("n"), err = $("n-err"), load = $("load"), r = $("r"), go = $("go");
+function fail(msg) { input.setAttribute("aria-invalid", "true"); err.textContent = msg; r.hidden = true; input.focus(); }
 $("f").addEventListener("submit", e => {
   e.preventDefault();
   const v = input.value.trim().replace("#", "");
   if (!v) return fail("Escribe tu número de pedido.");
   if (!/^\d+$/.test(v)) return fail("Usa solo números, por ejemplo 4.");
-  input.removeAttribute("aria-invalid");
-  err.textContent = "";
-  r.hidden = true;
-  load.hidden = false;
-  // En la app real esto sería una llamada a la API; aquí simulamos la espera.
+  input.removeAttribute("aria-invalid"); err.textContent = ""; r.hidden = true; load.hidden = false; go.disabled = true;
+  // En la app real esto sería una llamada a la API; aquí se simula la espera.
   setTimeout(() => {
-    load.hidden = true;
+    load.hidden = true; go.disabled = false;
     const p = pedidos.find(x => x.id === Number(v));
     if (!p) return fail(`No encontramos el pedido #${v}. Revisa tu comprobante o pregunta en el camión.`);
-    const [t, d] = texto[p.estado];
-    const i = orden.indexOf(p.estado);
+    const [t, d] = texto[p.estado], i = orden.indexOf(p.estado);
     // Solo el primer nombre: la consulta es pública.
     $("r-t").textContent = `Pedido #${p.id} de ${p.cliente.split(" ")[0]}: ${t}`;
     $("r-d").textContent = `Camión ${p.camion_id}. ${d}`;
     [...$("r-track").children].forEach((li, k) => {
       li.className = k < i ? "done" : k === i ? (p.estado === "Ready" ? "now" : "done") : "";
-      li.toggleAttribute("aria-current", k === i);
+      if (k === i) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
     });
     r.hidden = false;
   }, reduce ? 0 : 450);
 });
+
+// Entradas escalonadas: solo transform, el contenido es visible aunque falle el script.
+if (!reduce && "IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    const sibs = [...en.target.parentElement.querySelectorAll(":scope > .rise")];
+    en.target.style.transitionDelay = (Math.max(0, sibs.indexOf(en.target)) * 80) + "ms";
+    en.target.classList.add("in"); io.unobserve(en.target);
+  }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".rise").forEach(el => io.observe(el));
+} else {
+  document.querySelectorAll(".rise").forEach(el => el.classList.add("in"));
+}
 </script>
 </body>
 </html>
